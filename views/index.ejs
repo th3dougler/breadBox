@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--Import Google Icon Font-->
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <!-- Compiled and minified CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <title>breadBox - bread recipe development</title>
+  </head>
+  <body>
+    <div class="navbar-fixed">
+      <nav>
+        <div class="nav-wrapper white">
+          <a href="#!" class="brand-logo center black-text">bB </a>
+          <ul class="right">
+            <li ><a href="/recipes" class="black-text waves-effect waves-orange">
+              <i class="material-icons right">vpn_key</i><span class="hide-on-small-and-down">Login</span></a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="parallax-container">
+      <div class="valign-wrapper" style="height: 100%;">
+        <div class="row">
+          <div style="padding: 5px; background-color: #00000091" class="col s12 center white-text">
+            <div style="border: 3px double white; padding: 1em">
+              <h1>breadBox</h1>
+              <h4>a bread recipe manager for people who manage bread recipes</h4>
+              <div class="input-field">
+                <a class="btn-large waves-effect waves-orange transparent" href="/recipes" style="border:2px solid white;">Login</a>
+                <a class="btn-large waves-effect waves-orange transparent" href="#" style="border:2px solid white;">How-To</a>  
+              </div>
+            </div>
+          </div>  
+        </div>
+        
+      </div>
+      <div class="parallax" ><img src="images/baked.jpg" /></div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col s12 l3 center">
+          <h4>About</h4>      
+        </div>
+        <div class="col l9">
+          <p>Designed by bakers, for bakers.</p>
+          <p>Easily build recipes using weights and bakers percentage, reference our comprehensive library of ingredients or create your own custom inventory.
+          </p>
+          <p>Built with mobile devices in mind, easily build complex recipes on your phone, tablet, or desktop PC</p>
+          <p>Export your recipes, or share them with your coworkers, friends, family or strangers on the internet!  We take the grunt work out of formatting and developing your recipes so you can focus on the fun part</p>
+          <p><strong>Finally, you have complete control</strong></p>
+        </div>
+      </div>
+    </div>
+    
+      <div class="parallax-container">
+      <div class="parallax" ><img src="images/loader.jpg" /></div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col s12 l3 center">
+          <h4>Features</h4>
+        </div>
+        <div class="col s12 l9">
+          <ul class="tabs">
+            <li class="tab col s3"><a class="active waves-effect waves-orange" href="#tab1">Create</a></li>
+            <li class="tab col s3"><a class="waves-effect waves-orange" href="#tab2">Share</a></li>
+            <li class="tab col s3"><a class="waves-effect waves-orange" href="#tab3">Export</a></li>
+          </ul>
+          <div id="tab1" class="col">
+            <ul>
+              <li>Creating a recipe shouldnt be complicated
+                <ul class="ulPlus">
+                  <li>Search our inventory for countless ingredients</li>
+                  <li>Or fill your personal inventory with custom ingredients</li>
+                  <li>Build out your recipes using weights, or by bakers percentage</li>
+                  <li>Markdown support lets you write out your method with complete formatting control.  Easy to read, easy to understand, easy to learn. </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          <div id="tab2" class="col ">
+            <ul>
+              <li>Share your recipes, or keep them all to yourself
+               <ul class="ulPlus">
+                  <li>Share a link to your recipe via social media</li>
+                  <li>with our custom tags for your website or forum</li>
+                  <li>or keep your recipes private, so no one else but you knows</li>
+                </ul>
+              </li>             
+            </ul>
+          </div>
+          <div id="tab3" class="col ">
+            <ul>
+              <li>Export to popular formats
+               <ul class="ulPlus">
+                  <li>Google Sheets / ODF Spreadsheet</li>
+                  <li>PDF</li>
+                  <li>PNG/JPG</li>
+                  <li>CSV, JSON, TXT</li>
+                </ul>
+              </li>             
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+
+      document.addEventListener("DOMContentLoaded", function () {
+      var elems = document.querySelectorAll('.tabs')
+      M.Tabs.init(elems, {swipeable: true});
+       elems = document.querySelectorAll('.sidenav');
+      M.Sidenav.init(elems);
+      elems = document.querySelectorAll('.parallax');
+      M.Parallax.init(elems);
+       
+        
+      });
+    </script>
+  </body>
+</html>

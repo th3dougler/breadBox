@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--Import Google Icon Font-->
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <!-- Compiled and minified CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <title><%= title %></title>
+  </head>
+  <body>
+    <div class="navbar-fixed">
+    <nav>
+      <div class="nav-wrapper orange darken-4">
+        <a href="#" class="brand-logo center">bB - <%= user.name %> </a>
+        <a href="#" data-target="burger-menu" class="sidenav-trigger right">
+          <i class="material-icons">menu</i></a>
+        <ul class="right hide-on-med-and-down">
+          <li class="right"><a href="/logout" class="waves-effect waves-light"><i class="material-icons left">exit_to_app</i>Logout</a></li>
+          <li class="<%=(active == "recipes")?"active":""%>"><a href="#" class="waves-effect waves-light">Recipes</a></li>
+          <li class="<%=(active == "inventory")?"active":""%>"><a href="#" class="waves-effect waves-light">Custom Inventory</a></li>
+        </ul>
+      </div>
+    </div>
+    </nav>
+    <ul class="sidenav " id="burger-menu">
+      <li><a href="/logout"><i class="material-icons left">exit_to_app</i>Logout</a></li>
+      <li><a href="#">Recipes</a></li>
+      <li><a href="#">Custom Inventory</a></li>
+    </ul>
