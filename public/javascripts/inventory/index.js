@@ -11,7 +11,6 @@ document.addEventListener("DOMContentLoaded", function () {
   createForm = document.getElementById("create-inventory-form");
   createForm.addEventListener("submit", submitNew);
   inventoryList = document.getElementById('inventory-list');
-  inventoryList.addEventListener('click', onClick);
   
   var elems = document.querySelectorAll(".sidenav");
   var instances = M.Sidenav.init(elems, { edge: "right" });
@@ -50,11 +49,8 @@ async function submitNew(evt) {
 
 
 async function onClick(evt){
- 
-  
   try{
-    
-    if(evt.target.innerHTML.toUpperCase() === "DELETE"){
+    if(evt.target.innerHTML.toUpperCase() === "CONFIRM"){
       evt.preventDefault();
       const response = await fetch(`/inventory/${evt.target.id}`, {
         method: "DELETE", // *GET, POST, PUT, DELETE, etc.
@@ -71,7 +67,6 @@ async function onClick(evt){
 
 async function init(){
   document.body.style.cursor = "wait";
- 
   try{    
     inventoryListArr = await fetch('/inventory/getIndex').then(res=>res.json());
     await render();
@@ -86,6 +81,8 @@ async function init(){
 }
 
 function render(){
+  let fragment = new DocumentFragment();
+  let modalFragment = new DocumentFragment();
   if(inventoryList != null){
     while (inventoryList.firstChild){
         inventoryList.removeChild(inventoryList.firstChild);
@@ -107,14 +104,41 @@ function render(){
       "<a href=/inventory/" +
       item._id +
       '><i class="material-icons">edit</i></a>';
-    cells.del.innerHTML =
-      '<a href="#"><i id="' +
-      item._id +
-      '"class="material-icons">delete</i></a>';
+    cells.del.innerHTML =`<a href="#${item._id}" class="modal-trigger"><i class="material-icons">delete</i></a>`
     for (let key in cells){
       row.appendChild(cells[key]);
     }
-    inventoryList.appendChild(row);
+    fragment.appendChild(row);
+    modalFragment.appendChild(createConfirmModal(item._id));
     }); 
+    inventoryList.appendChild(fragment);
+    inventoryList.appendChild(modalFragment);
+    
+    var elems = document.querySelectorAll(".modal");
+    M.Modal.init(elems);
   }
 
+  function createConfirmModal(id){
+    let fragment = new DocumentFragment();
+    let modal = document.createElement('div');
+    modal.className = "modal";
+    modal.id = id;
+    let modalContent = document.createElement('div');
+    modalContent.className = "modal-content";
+    let modalFooter = document.createElement('div');
+    modalFooter.className = "modal-footer";
+    let deleteButton = document.createElement('a');
+    deleteButton.href = "#!";
+    deleteButton.id = id;
+    deleteButton.className = "btn modal-close right red"
+    deleteButton.innerHTML = "Confirm";
+    deleteButton.addEventListener("click", onClick)
+    modalContent.innerHTML = `<h4 class="center">Are you sure?<h4>`
+    modalFooter.innerHTML = `<a href="#!"  class="btn-flat modal-close left">Back</a>`;
+    modalFooter.appendChild(deleteButton);
+    
+    modal.appendChild(modalContent);
+    modal.appendChild(modalFooter);
+    fragment.appendChild(modal);
+    return fragment;
+  }

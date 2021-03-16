@@ -16,9 +16,7 @@ function yyyymmdd(date) {
 document.addEventListener("DOMContentLoaded", function () {
   createRecipeForm = document.getElementById("create-recipe-form");
   createRecipeForm.addEventListener("submit", submitNewRecipe);
-
   recipeListTable = document.getElementById("recipe-list");
-  recipeListTable.addEventListener("click", onClick);
   // materialize init stuff
   var elems = document.querySelectorAll(".sidenav");
   var instances = M.Sidenav.init(elems, { edge: "right" });
@@ -57,10 +55,9 @@ async function submitNewRecipe(evt) {
 }
 
 async function onClick(evt) {
-  if (evt.target.innerHTML.toUpperCase() === "DELETE") {
+  if (evt.target.innerHTML.toUpperCase() === "CONFIRM") {
   try {
-
-      evt.preventDefault();
+    evt.preventDefault();
       await fetch(`/recipes/${evt.target.id}`, {
         method: "DELETE", // *GET, POST, PUT, DELETE, etc.
         cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
@@ -86,6 +83,8 @@ async function init() {
   
 }
 function render() {
+  let fragment = new DocumentFragment();
+  let modalFragment = new DocumentFragment();
   if (recipeListTable != null) {
     while (recipeListTable.firstChild) {
       recipeListTable.removeChild(recipeListTable.firstChild);
@@ -107,13 +106,40 @@ function render() {
       "<a href=/recipes/" +
       recipe._id +
       '><i class="material-icons">edit</i></a>';
-    cells.del.innerHTML =
-      '<a href="#"><i id="' +
-      recipe._id +
-      '"class="material-icons">delete</i></a>';
+    cells.del.innerHTML =`<a href="#${recipe._id}" class="modal-trigger"><i class="material-icons">delete</i></a>`
     for (let key in cells) {
       row.appendChild(cells[key]);
     }
-    recipeListTable.appendChild(row);
+    fragment.appendChild(row);
+    modalFragment.appendChild(createConfirmModal(recipe._id));
   });
+  recipeListTable.appendChild(fragment);
+  recipeListTable.appendChild(modalFragment);
+  var elems = document.querySelectorAll(".modal");
+  M.Modal.init(elems);
+}
+
+function createConfirmModal(id){
+  let fragment = new DocumentFragment();
+  let modal = document.createElement('div');
+  modal.className = "modal";
+  modal.id = id;
+  let modalContent = document.createElement('div');
+  modalContent.className = "modal-content";
+  let modalFooter = document.createElement('div');
+  modalFooter.className = "modal-footer";
+  let deleteButton = document.createElement('a');
+  deleteButton.href = "#!";
+  deleteButton.id = id;
+  deleteButton.className = "btn modal-close right red"
+  deleteButton.innerHTML = "Confirm";
+  deleteButton.addEventListener("click", onClick)
+  modalContent.innerHTML = `<h4 class="center">Are you sure?<h4>`
+  modalFooter.innerHTML = `<a href="#!"  class="btn-flat modal-close left">Back</a>`;
+  modalFooter.appendChild(deleteButton);
+  
+  modal.appendChild(modalContent);
+  modal.appendChild(modalFooter);
+  fragment.appendChild(modal);
+  return fragment;
 }
