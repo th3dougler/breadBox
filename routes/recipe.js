@@ -15,7 +15,7 @@ router.get('/getIndex', isLoggedIn, recipeCtrl.getIndex);
 router.post('/', isLoggedIn, recipeCtrl.create);
 
 
-router.get('/:id', isLoggedIn, recipeCtrl.edit);
+router.get('/:id/edit', isLoggedIn, recipeCtrl.edit);
 
 router.delete('/:id', isLoggedIn, recipeCtrl.delete);
 

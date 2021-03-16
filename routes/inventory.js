@@ -11,6 +11,7 @@ function isLoggedIn(req, res, next){
 router.get('/', isLoggedIn, inventoryCtrl.index);
 
 router.get('/getIndex', isLoggedIn, inventoryCtrl.getIndex);
+router.get('/getFuzzy', isLoggedIn, inventoryCtrl.getFuzzy);
 
 
 router.post('/', isLoggedIn, inventoryCtrl.create);

@@ -1,86 +1,92 @@
-<%- include('../partials/head') %>
-<div style="overflow-x: scroll">
-  <table id="root-table">
-    <tr>
-      <td>
-        <table>
-          <tr>
-            <th colspan="3">Total Dough Weight (TDW)</th>
-            <th class="yellow center">123 kg</th>
-          </tr>
-          <tr class="orange lighten-3">
-            <th colspan="1" class="center">Total Formula</th>
-            <th colspan="3">
-              <div class="switch">
-                <label
-                  >%<input type="checkbox" /><span class="lever"></span
-                  >wt</label
-                >
-              </div>
-            </th>
-          </tr>
-          <tr>
-            <th>Ingredients</th>
-            <th class="center">Flour</th>
-            <th class="center">%</th>
-            <th class="center">kg</th>
-          </tr>
-          <tr>
-            <td><input type="text" /></td>
-            <td>
-              <div class="switch">
-                <label
-                  ><input type="checkbox" /><span class="lever"></span
-                ></label>
-              </div>
-            </td>
-          </tr>
-        </table>
-      </td>
-      <td>
-        <table>
-          <tr>
-            <th>Total Flour</th>
-            <th class="orange center">40 %</th>
-          </tr>
-          <tr>
-            <th colspan="2" class="orange lighten-3" style="text-align: center">
-              Preferment
-            </th>
-          </tr>
-          <tr>
-            <th class="center">%</th>
-            <th class="center">kg</th>
-          </tr>
-          <tr>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-          </tr>
-        </table>
-      </td>
-      <td>
-        <table>
-          <tr>
-            <th>Total Flour</th>
-            <th class="orange center">60 %</th>
-          </tr>
-          <tr>
-            <th colspan="2" class="orange lighten-3" style="text-align: center">
-              Final
-            </th>
-          </tr>
-          <tr>
-            <th class="center">%</th>
-            <th class="center">kg</th>
-          </tr>
-          <tr>
-            <td><input type="text" /></td>
-            <td><input type="text" /></td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--Import Google Icon Font-->
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <!-- Compiled and minified CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <link href="/tabulator/css/tabulator.min.css" rel="stylesheet" />
+    <title><%= title %></title>
+  </head>
+  <body>
 
-<%- include('../partials/foot') %>
+    <div class="fixed-action-btn">
+      <a class="btn-floating btn-large orange">
+        <i class="large material-icons">menu</i>
+      </a>
+      <ul>
+        <li>
+          <a href="#" class="btn-floating green"><i class="material-icons">share</i>Share</a>
+        </li>
+        <li>
+          <a href="/recipes/" class="btn-floating blue"><i class="material-icons">exit_to_app</i>Back</a>
+        </li>
+        <li>
+          <a id="add-new-table" href="#" class="btn-floating red"><i class="material-icons">add</i>Add</a>
+        </li>
+      </ul>
+    </div>
+    
+      <div>
+        <div clss="col s12">
+          <ul class="collapsible">
+            <li>
+              <div class="collapsible-header">
+                <i class="material-icons">filter_drama</i><%= recipe.name %> 
+              </div>
+              <div class="collapsible-body">
+              <form>
+                <div class="row">
+                  <div class="input-field col">
+                    <input name="name" id="name" type="text" value= "<%= recipe.name %>">
+                    <label for="name">Name: </label>
+                  </div>
+                  <div class="switch col">
+                    <label>
+                      Imperial
+                      <input  class="right" type="checkbox" checked>
+                      <span class="lever"></span>
+                      Metric
+                    </label>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="input-field col s12">
+                    <input name="description" id="description" type="text" value= "<%= recipe.description %>">
+                    <label for="description">Description: </label>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="right">
+                  <button type="submit" class="btn-flat waves-effect waves-orange">Update</button>
+                  
+                  </div>
+                </div>
+              </form>
+            </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div id="example"></div>
+        <button id="add-row" class="btn-floating red waves-effect waves-light"><i class="material-icons">add</i></button>
+      </div>
+      
+        
+    </div>
+    <script type="text/javascript" src="/tabulator/js/tabulator.js"></script>
+    <script src="/javascripts/recipes/edit.js"></script>
+    <%- include('../partials/foot') %>
+  </body>
+</html>

@@ -28,6 +28,9 @@ async function getIndex(req, res, next){
         })
     }
 }
+async function getOne(req,res,next){
+    
+}
 
 async function create(req, res, next){
     try{
@@ -47,11 +50,21 @@ async function create(req, res, next){
     }
 }
 async function edit(req,res, next){
-    res.render('recipes/edit',{
-        title: "Edit",
-        user: req.user,
-        active: "recipes",
-    })
+    try{
+        let thisRecipe = await Recipe.findById(req.params.id);
+        res.render('recipes/edit',{
+            title: "Edit",
+            user: req.user,
+            active: "recipes",
+            recipe: thisRecipe,
+        })
+    }catch(err){
+        res.render('error',{
+            message: 'recipe.js controller - edit',
+            error: err,
+        })
+    }
+
 }
 async function deleteItem(req, res, next){
     try{

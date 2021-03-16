@@ -102,10 +102,7 @@ function render() {
     cells.name.innerHTML = recipe.name;
     cells.desc.innerHTML = recipe.description;
     cells.created.innerHTML = yyyymmdd(recipe.createdAt);
-    cells.edit.innerHTML =
-      "<a href=/recipes/" +
-      recipe._id +
-      '><i class="material-icons">edit</i></a>';
+    cells.edit.innerHTML =`<a href="/recipes/${recipe._id}/edit"><i class="material-icons">edit</i></a>`;
     cells.del.innerHTML =`<a href="#${recipe._id}" class="modal-trigger"><i class="material-icons">delete</i></a>`
     for (let key in cells) {
       row.appendChild(cells[key]);

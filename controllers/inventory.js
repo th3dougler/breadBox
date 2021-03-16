@@ -1,9 +1,11 @@
 const User = require('../models/user');
 const CustomIngredient = require('../models/customIngredient');
+var FuzzySearch = require('fuzzy-search');
 
 module.exports = {
     index,
     getIndex,
+    getFuzzy,
     create,
     delete: deleteItem,
 }
@@ -30,6 +32,20 @@ async function getIndex(req, res, next){
     }catch(err){
         res.render('error',{
             message: 'inventory controller - getindex',
+            error: err,
+        })
+    }
+}
+
+async function getFuzzy(req, res, next){
+    try{
+       let arr = await CustomIngredient.find({user: req.user._id});
+       const searcher = new FuzzySearch(arr, ['name']);
+       const result = searcher.search(req.query.search);
+       res.send(result);
+    }catch(err){
+        res.render('error',{
+            message: 'inventory controller - getfuzzy',
             error: err,
         })
     }
