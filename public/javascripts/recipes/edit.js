@@ -1,16 +1,17 @@
 var tabledata = [{}] ;//= [{ id: 1, ingredient: " ", isflour: false, bp: 1.5, wt: 10 }];
 var searchTable;
+var defaultSort = [
+  {column: "ingredient", dir:"asc"}, 
+  {column: "wt", dir:"dec"},
+  {column: "isflour", dir:"dec"},
+];
 var table = new Tabulator("#example", {
   history: true,
   tabEndNewRow: true,
   height: "100%", // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
   data: tabledata, //assign data to table
   //layout:"fitColumns", //fit columns to width of table (optional)
-  initialSort:[
-    {column: "isflour", dir:"asc"},
-    {column: "ingredient", dir:"asc"},
-      
-  ],
+  initialSort:defaultSort,
   columns: [
     //Define Table Columns
     {
@@ -22,13 +23,16 @@ var table = new Tabulator("#example", {
       editor: "autocomplete",
       sorter: "string",
       editorParams: {
+        search: true,
         freetext: true,
         allowEmpty: false,
         searchFunc: async function (term) {
           let matches = [];
           searchTable = await fuzzySearch(term);
-          searchTable.forEach((val) => {
+          searchTable.forEach((val, idx) => {
             matches.push(val.name);
+            if(idx >= 10)
+              return
           });
           return matches;
         },
@@ -51,7 +55,7 @@ var table = new Tabulator("#example", {
         {
           title: "BP (%)",
           field: "bp",
-          editor: "number",
+          editor: false,
           editorParams: {
             min: 0,
             max: 100,
@@ -61,6 +65,7 @@ var table = new Tabulator("#example", {
           title: "Wt. (g)",
           field: "wt",
           editor: "number",
+          sorter: "number",
           editorParams: {
             min: 0,
           },
@@ -77,8 +82,11 @@ document.addEventListener("DOMContentLoaded", function () {
   var addNewTable = document.getElementById("add-new-table");
   addNewTable.addEventListener("click", onClick);
   
-  var addRowBtn = document.getElementById('add-row');
+  var addRowBtn = document.getElementById('add-row-btn');
   addRowBtn.addEventListener("click", addRow)
+  var sortBtn = document.getElementById('sort-btn');
+  sortBtn.addEventListener("click", sortRecipe)
+  
   
   var elems = document.querySelectorAll(".fixed-action-btn");
   M.FloatingActionButton.init(elems, { direction: "left" });
@@ -88,6 +96,9 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 function addRow(){
     table.addRow({});
+}
+function sortRecipe(){
+  table.setSort(defaultSort);
 }
 function onClick(evt) {
   console.log(evt.target);
