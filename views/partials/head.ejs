@@ -34,7 +34,7 @@
     </nav>
     <ul class="sidenav " id="burger-menu">
       <li><a href="/logout"><i class="material-icons left">exit_to_app</i>Logout</a></li>
-      <li><a href="#">Recipes</a></li>
-      <li><a href="#">Custom Inventory</a></li>
+      <li class="<%=(active == "recipes")?"active":""%>"><a href="/recipes">Recipes</a></li>
+      <li class="<%=(active == "inventory")?"active":""%>"><a href="/inventory">Custom Inventory</a></li>
     </ul>
 <% include('dateHelper')  %> 
