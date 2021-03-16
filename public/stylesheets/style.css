@@ -1,4 +1,6 @@
-
+body{
+  height: 100vh;
+}
 ul.ulPlus{
     list-style: none;
     margin-left: 0;
@@ -41,4 +43,10 @@ ul.ulPlus{
   .tabs .indicator {
     background-color:black;
     /*Custom Color Of Indicator*/
+  }
+  
+  #root-table{
+    /* table-layout: fixed; */
+  }
+  #root-table > table > tr > td{
   }

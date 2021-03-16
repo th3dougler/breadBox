@@ -21,13 +21,13 @@
     <div class="navbar-fixed">
     <nav>
       <div class="nav-wrapper orange darken-4">
-        <a href="#" class="brand-logo center">bB - <%= user.name %> </a>
+        <a href="#" class="brand-logo center">bB <span class="hide-on-med-and-down">- <%= user.name %> </span></a>
         <a href="#" data-target="burger-menu" class="sidenav-trigger right">
           <i class="material-icons">menu</i></a>
         <ul class="right hide-on-med-and-down">
           <li class="right"><a href="/logout" class="waves-effect waves-light"><i class="material-icons left">exit_to_app</i>Logout</a></li>
-          <li class="<%=(active == "recipes")?"active":""%>"><a href="#" class="waves-effect waves-light">Recipes</a></li>
-          <li class="<%=(active == "inventory")?"active":""%>"><a href="#" class="waves-effect waves-light">Custom Inventory</a></li>
+          <li class="<%=(active == "recipes")?"active":""%>"><a href="/recipes" class="waves-effect waves-light">Recipes</a></li>
+          <li class="<%=(active == "inventory")?"active":""%>"><a href="/inventory" class="waves-effect waves-light">Custom Inventory</a></li>
         </ul>
       </div>
     </div>
@@ -37,3 +37,4 @@
       <li><a href="#">Recipes</a></li>
       <li><a href="#">Custom Inventory</a></li>
     </ul>
+<% include('dateHelper')  %> 

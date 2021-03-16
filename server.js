@@ -10,6 +10,8 @@ require('dotenv').config();
 
 var indexRouter = require('./routes/index');
 var recipeRouter = require('./routes/recipe');
+var customInventoryRouter = require('./routes/inventory');
+
 
 var app = express();
 
@@ -36,6 +38,8 @@ app.use(passport.session());
 
 app.use('/', indexRouter);
 app.use('/recipes', recipeRouter);
+app.use('/inventory', customInventoryRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

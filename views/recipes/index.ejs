@@ -1,10 +1,50 @@
-<%- include('partials/head')  %>     
-
-
-<div style="height: 3000px;"></div>
+<%- include('../partials/head')  %>
+  <table class="highlight">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Date Created</th>
+        <th>Edit</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody id="recipe-list">
+      <tr><th>LOADING...</th></tr>
+    </tbody>
+  </table>
+  
 <div class="fixed-action-btn">
-  <a class="btn-floating btn-large waves-effect waves-light red">
+  <a href="#new-recipe-modal" class="btn-floating btn-large waves-effect waves-light red btn modal-trigger">
     <i class="large material-icons">add</i>
   </a>
 </div>
-<%- include('partials/foot')  %>     
+<div id="new-recipe-modal" class="modal">
+  <div class="modal-content">
+    <h4>Create New Recipe</h4>
+    <div class="col s12">
+    <form id="create-recipe-form">
+      <div class="row">
+        <div class="input-field col s12">
+          <% let today = new Date(); %> 
+          <input id="name" name="name" type="text" class="validate" value="<%= today.getFullYear() + "/" + ( today.getMonth() + 1 ).toString().padStart(2,'0') + "/" + today.getDate().toString().padStart(2,'0') %>"required>
+          <label for="name">Recipe name:</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12">
+          <textarea id="description" name="description" class="materialize-textarea"></textarea>
+          <label for="textarea1">Description</label>
+        </div>
+      </div>
+    </div>  
+    
+  </div>
+  <div class="modal-footer">
+    <button id="submit-new-recipe" type="submit" form="create-recipe-form" class="modal-close waves-effect waves-orange btn-flat ">Create</button></form>
+    <a href="#!" class="modal-close waves-effect waves-red btn-flat left">Back</a>
+    
+  </div>
+</div>
+<script src="/javascripts/recipes/index.js"></script>
+<%- include('../partials/foot')  %>     

@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 
 var recipeSchema = new mongoose.Schema({
     name: String,
+    description: String,
     user: {type: mongoose.SchemaTypes.ObjectId, ref: "User"},
     uomPref: {type: Boolean, default: true},
     private: {type: Boolean, default: true},

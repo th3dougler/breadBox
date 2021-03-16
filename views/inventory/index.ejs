@@ -1,0 +1,50 @@
+<%- include('../partials/head')  %>  
+<table class="highlight">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Date Created</th>
+      <th>Edit</th>
+      <th>Delete</th>
+    </tr>
+  </thead>
+  <tbody id="inventory-list">
+    <tr><th>LOADING...</th></tr>
+  </tbody>
+
+</table>
+
+<div class="fixed-action-btn">
+  <a href="#new-inventory-modal" class="btn-floating btn-large waves-effect waves-light red btn modal-trigger">
+    <i class="large material-icons">add</i>
+  </a>
+</div>
+<div id="new-inventory-modal" class="modal">
+  <div class="modal-content">
+    <h4>Create New Ingredient</h4>
+    <div class="col s12">
+    <form id="create-inventory-form">
+      <div class="row">
+        <div class="input-field col s12">
+          <input id="name" name="name" type="text" class="validate" required>
+          <label for="name">Item name:</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12">
+          <textarea id="description" name="description" class="materialize-textarea"></textarea>
+          <label for="textarea1">Description</label>
+        </div>
+      </div>
+    </div>  
+    
+  </div>
+  <div class="modal-footer">
+    <button id="submit-new-inventory" type="submit" form="create-inventory-form" class="modal-close waves-effect waves-orange btn-flat ">Create</button></form>
+    <a href="#!" class="modal-close waves-effect waves-red btn-flat left">Back</a>
+    
+  </div>
+</div>
+<script src="/javascripts/inventory/index.js"></script>
+<%- include('../partials/foot')  %>     
