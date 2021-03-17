@@ -15,7 +15,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
     />
     <link rel="stylesheet" href="/stylesheets/style.css" />
-    <link href="/tabulator/css/tabulator.min.css" rel="stylesheet" />
+    <link href="/tabulator/css/materialize/tabulator_materialize.min.css" rel="stylesheet" />
     <title><%= title %></title>
   </head>
   <body>
@@ -78,12 +78,19 @@
           </ul>
         </div>
       </div>
-      <div class="container z-depth-2">
-        <div id="example"></div>
-
+      <div class="container">
+        <div class="row z-depth-2">
+          <div id="example" class="orange lighten-5 striped"></div>  
+        </div>
+        <div class="row">
+        <div class="col s12">
+          <button id="add-row-btn" class="btn red waves-effect waves-light"><i class="material-icons">add</i></button>
+          <button id="sort-btn" class="btn yellow waves-effect waves-light"><i class="material-icons">sort</i></button>
+          <button id="toggle-bp" class="btn orange darken-3 waves-effect waves-light">Weight</button>
+          
+        </div>
       </div>
-      <button id="add-row-btn" class="btn-floating red waves-effect waves-light"><i class="material-icons">add</i></button>
-      <button id="sort-btn" class="btn-floating yellow waves-effect waves-light"><i class="material-icons">sort</i></button>
+      </div>
       
         
     </div>

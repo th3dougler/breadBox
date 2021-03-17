@@ -38,6 +38,23 @@ var table = new Tabulator("#example", {
         },
       },
     },
+    {
+      title: `<i class="material-icons">delete</i>`,
+      field: "delete",
+      formatter: "tickCross",
+      frozen: true,
+      headerSort: false,
+      maxWidth: 100,
+      formatterParams: {
+        tickElement:`<i class="material-icons">delete_forever</i>`,
+        crossElement:`<i class="material-icons red-text">delete_forever</i>`,
+      },
+      cellClick: function (e, cell) {
+        let row = cell.getRow();
+        if (table.rowManager.activeRowsCount > 1)
+          row.delete();
+      },
+    },
     { title: "id", field: "id", visible: true },
     {
       title: "flour",
@@ -45,6 +62,10 @@ var table = new Tabulator("#example", {
       formatter: "tickCross",
       sorter: "boolean",
       maxWidth: 100,
+      formatterParams: {
+        tickElement:`<i class="material-icons green-text">check_box</i>`,
+        crossElement:`<i class="material-icons">check_box_outline_blank</i>`,
+      },
       cellClick: function (e, cell) {
         cell.setValue(!cell.getValue());
       },
@@ -80,7 +101,7 @@ var table = new Tabulator("#example", {
 
 document.addEventListener("DOMContentLoaded", function () {
   var addNewTable = document.getElementById("add-new-table");
-  addNewTable.addEventListener("click", onClick);
+  addNewTable.addEventListener("click", addTable);
   
   var addRowBtn = document.getElementById('add-row-btn');
   addRowBtn.addEventListener("click", addRow)
@@ -100,7 +121,30 @@ function addRow(){
 function sortRecipe(){
   table.setSort(defaultSort);
 }
-function onClick(evt) {
+function addTable(evt) {
+  table.addColumn({
+        title: "New Table",
+        columns: [
+          {
+            title: "BP (%)",
+            field: "bp1",
+            editor: false,
+            editorParams: {
+              min: 0,
+              max: 100,
+            },
+          },
+          {
+            title: "Wt. (g)",
+            field: "wt1",
+            editor: "number",
+            sorter: "number",
+            editorParams: {
+              min: 0,
+            },
+          },
+        ],
+      });
   console.log(evt.target);
 }
 function updateId(value, data, type, params, component) {
