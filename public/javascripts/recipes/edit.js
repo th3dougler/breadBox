@@ -1,5 +1,6 @@
 var tabledata = [{}] ;//= [{ id: 1, ingredient: " ", isflour: false, bp: 1.5, wt: 10 }];
 var searchTable;
+var tableLength = 0;
 var defaultSort = [
   {column: "ingredient", dir:"asc"}, 
   {column: "wt", dir:"dec"},
@@ -38,6 +39,8 @@ var table = new Tabulator("#example", {
         },
       },
     },
+    { title: "id", field: "id", visible: true },
+    
     {
       title: `<i class="material-icons">delete</i>`,
       field: "delete",
@@ -55,7 +58,6 @@ var table = new Tabulator("#example", {
           row.delete();
       },
     },
-    { title: "id", field: "id", visible: true },
     {
       title: "flour",
       field: "isflour",
@@ -117,13 +119,39 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 function addRow(){
     table.addRow({});
+    console.log(table.columnManager,table.columnManager.columns.length)
 }
 function sortRecipe(){
   table.setSort(defaultSort);
 }
+
+var fdColumns = {
+  title: `Final Dough`,
+  columns: [
+    {
+      title: "BP (%)",
+      field: "bp1",
+      editor: false,
+      editorParams: {
+        min: 0,
+        max: 100,
+      },
+    },
+    {
+      title: "Wt. (g)",
+      field: "wt1",
+      editor: "number",
+      sorter: "number",
+      editorParams: {
+        min: 0,
+      }}
+    ]
+}
 function addTable(evt) {
+  table.deleteColumn(fdColumns);
+  
   table.addColumn({
-        title: "New Table",
+        title: `<input type="text" value="New Table${++tableLength}" required />`,
         columns: [
           {
             title: "BP (%)",
@@ -144,7 +172,11 @@ function addTable(evt) {
             },
           },
         ],
+      }).then( function(){
+          table.addColumn(fdColumns);
+    
       });
+
   console.log(evt.target);
 }
 function updateId(value, data, type, params, component) {

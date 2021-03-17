@@ -19,5 +19,4 @@ router.get('/:id/edit', isLoggedIn, recipeCtrl.edit);
 
 router.delete('/:id', isLoggedIn, recipeCtrl.delete);
 
-
 module.exports = router;
