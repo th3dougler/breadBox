@@ -431,8 +431,11 @@ function updateFlour() {
           : 0;
     }
     if (tableLength > 0) {
+      console.log(formulaTotal, tableTotal)
+      tableTotal = (isNaN(tableTotal))? 0 : tableTotal;
       row.update({ wtf: formulaTotal - tableTotal });
       let bpCell = row.getCell(`bpf`);
+      
       bpCell.setValue(
         Number.parseFloat(data[`wtf`]) / flourWeight[tableLength + 1]
       );
