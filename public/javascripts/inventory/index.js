@@ -1,6 +1,10 @@
 var createForm;
 var inventoryList;
 let inventoryListArr;
+var sortName;
+var sortNameAsc = true;
+var sortDate;
+var sortDateAsc = true;
 
 function yyyymmdd(date){
   let newDate = new Date(date);
@@ -11,6 +15,12 @@ document.addEventListener("DOMContentLoaded", function () {
   createForm = document.getElementById("create-inventory-form");
   createForm.addEventListener("submit", submitNew);
   inventoryList = document.getElementById('inventory-list');
+  
+  sortDate = document.getElementById('sort-date');
+  sortDate.addEventListener('click', (e)=>{sort(0)})
+  
+  sortName = document.getElementById('sort-name');
+  sortName.addEventListener('click', (e)=>{sort(1)})
   
   var elems = document.querySelectorAll(".sidenav");
   var instances = M.Sidenav.init(elems, { edge: "right" });
@@ -69,6 +79,7 @@ async function init(){
   document.body.style.cursor = "wait";
   try{    
     inventoryListArr = await fetch('/inventory/getIndex').then(res=>res.json());
+    sort();
     await render();
     document.body.style.cursor = "default";
   }
@@ -78,6 +89,50 @@ async function init(){
   
   
 
+}
+function sort(column = 0){
+  if (column===0){
+    if(sortDateAsc === true){
+      inventoryListArr.sort(function(firstEl, secondEl){
+        let d1 = new Date(firstEl.createdAt);
+        let d2 = new Date(secondEl.createdAt);
+        return d1.getTime() - d2.getTime();
+      })
+      sortDateAsc = false;
+    }else{
+      inventoryListArr.sort(function(firstEl, secondEl){
+        let d1 = new Date(firstEl.createdAt);
+        let d2 = new Date(secondEl.createdAt);
+        return d2.getTime() - d1.getTime();
+      })
+      sortDateAsc = true;
+    }
+  }else if(column===1){
+    if(sortNameAsc === true){
+      inventoryListArr.sort(function(firstEl, secondEl){
+        let n1 = firstEl.name;
+        let n2 = secondEl.name;
+        if(n1.toUpperCase() < n2.toUpperCase())
+          return -1;
+        else if(n1.toUpperCase() > n2.toUpperCase())
+          return 1;
+        else return 0;
+      })
+      sortNameAsc = false;
+    }else{
+      inventoryListArr.sort(function(firstEl, secondEl){
+        let n1 = firstEl.name;
+        let n2 = secondEl.name;
+        if(n2.toUpperCase() < n1.toUpperCase())
+          return -1;
+        else if(n2.toUpperCase() >n1.toUpperCase())
+          return 1;
+        else return 0;
+      })
+      sortNameAsc = true;
+    }
+  }
+  render();
 }
 
 function render(){

@@ -1,6 +1,10 @@
 var createRecipeForm;
 var recipeListTable;
 var recipeList;
+var sortName;
+var sortNameAsc = true;
+var sortDate;
+var sortDateAsc = true;
 
 function yyyymmdd(date) {
   let newDate = new Date(date);
@@ -17,6 +21,14 @@ document.addEventListener("DOMContentLoaded", function () {
   createRecipeForm = document.getElementById("create-recipe-form");
   createRecipeForm.addEventListener("submit", submitNewRecipe);
   recipeListTable = document.getElementById("recipe-list");
+
+  sortDate = document.getElementById('sort-date');
+  sortDate.addEventListener('click', (e)=>{sort(0)})
+  
+  sortName = document.getElementById('sort-name');
+  sortName.addEventListener('click', (e)=>{sort(1)})
+  
+  
   // materialize init stuff
   var elems = document.querySelectorAll(".sidenav");
   var instances = M.Sidenav.init(elems, { edge: "right" });
@@ -75,6 +87,7 @@ async function init() {
   try {
     
     recipeList = await fetch("/api/getIndex").then(res => res.json());
+    sort(0);
     await render();
     document.body.style.cursor = "default";
   } catch (err) {
@@ -82,6 +95,52 @@ async function init() {
   }
   
 }
+function sort(column = 0){
+  console.log(recipeList);
+  if (column===0){
+    if(sortDateAsc === true){
+      recipeList.sort(function(firstEl, secondEl){
+        let d1 = new Date(firstEl.createdAt);
+        let d2 = new Date(secondEl.createdAt);
+        return d1.getTime() - d2.getTime();
+      })
+      sortDateAsc = false;
+    }else{
+      recipeList.sort(function(firstEl, secondEl){
+        let d1 = new Date(firstEl.createdAt);
+        let d2 = new Date(secondEl.createdAt);
+        return d2.getTime() - d1.getTime();
+      })
+      sortDateAsc = true;
+    }
+  }else if(column===1){
+    if(sortNameAsc === true){
+      recipeList.sort(function(firstEl, secondEl){
+        let n1 = firstEl.name;
+        let n2 = secondEl.name;
+        if(n1.toUpperCase() < n2.toUpperCase())
+          return -1;
+        else if(n1.toUpperCase() > n2.toUpperCase())
+          return 1;
+        else return 0;
+      })
+      sortNameAsc = false;
+    }else{
+      recipeList.sort(function(firstEl, secondEl){
+        let n1 = firstEl.name;
+        let n2 = secondEl.name;
+        if(n2.toUpperCase() < n1.toUpperCase())
+          return -1;
+        else if(n2.toUpperCase() >n1.toUpperCase())
+          return 1;
+        else return 0;
+      })
+      sortNameAsc = true;
+    }
+  }
+  render();
+}
+
 function render() {
   let fragment = new DocumentFragment();
   let modalFragment = new DocumentFragment();
@@ -90,6 +149,7 @@ function render() {
       recipeListTable.removeChild(recipeListTable.firstChild);
     }
   }
+
   recipeList.forEach((recipe) => {
     let row = document.createElement("tr");
     let cells = {
