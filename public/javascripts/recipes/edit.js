@@ -136,7 +136,7 @@ async function init() {
 }
 
 function formatPercent(cell) {
-  if (isNaN(cell.getValue()) || !isFinite(cell.getValue())) {
+  if (isNaN(cell.getValue()) || !isFinite(cell.getValue()) || cell.getValue() == 0) {
     return "";
   } else return (cell.getValue() * 100).toFixed(1) + "%";
 }
@@ -331,6 +331,7 @@ function addTable(evt) {
         }
       });
     });
+    updateFlour();
     saveTable();
   loadingCursor(false);
 }
