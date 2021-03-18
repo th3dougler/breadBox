@@ -14,6 +14,7 @@ router.get('/', isLoggedIn, recipeCtrl.index);
 
 router.post('/', isLoggedIn, recipeCtrl.create);
 
+router.put('/:id', isLoggedIn, recipeCtrl.update);
 
 router.get('/:id/edit', isLoggedIn, recipeCtrl.edit);
 

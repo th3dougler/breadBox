@@ -43,10 +43,10 @@
           <ul class="collapsible">
             <li>
               <div class="collapsible-header">
-                <i class="material-icons">filter_drama</i><%= recipe.name %> 
+                <i class="material-icons">filter_drama</i><span id="recipe-name"><%= recipe.name %></span> 
               </div>
               <div class="collapsible-body">
-              <form>
+              <form id="update-recipe-form">
                 <div class="row">
                   <div class="input-field col">
                     <input name="name" id="name" type="text" value= "<%= recipe.name %>">
@@ -60,13 +60,14 @@
                   </div>
                 </div>
                 <div class="row">
-                  <input id="recipe-id" type="hidden" value="<%= recipe._id %>"/>
+                  
                   <div class="right">
                   <button type="submit" id="update-recipe" class="btn-flat waves-effect waves-orange">Update</button>
                   
                   </div>
                 </div>
               </form>
+              <input id="recipe-id" type="hidden" value="<%= recipe._id %>"/>
             </div>
             </li>
           </ul>

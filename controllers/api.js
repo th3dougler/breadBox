@@ -21,9 +21,7 @@ async function getIndex(req, res, next) {
 
 async function getTable(req, res, next) {
   try {
-      console.log(req.params)
     let thisRecipe = await Recipe.findById(req.params.id);
-    console.log(thisRecipe);
     return res.send(thisRecipe)
   } catch (err) {
     res.render("error", {
@@ -36,7 +34,6 @@ async function getTable(req, res, next) {
 async function update(req, res, next) {
   try {
     let tables = Number.parseInt(req.query.table);
-    console.log(req.params, Number.parseInt(req.query.table), req.body)
     if(req.query.data == "col"){
       await Recipe.findByIdAndUpdate(
         req.params.id,

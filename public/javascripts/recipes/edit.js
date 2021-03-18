@@ -5,7 +5,8 @@ var tableLength = 0;
 let recipeId;
 var columnData = {};
 var rowData = {};
-
+var updateRecipeForm;
+let recipeName;
 var defaultSort = [
   { column: "ingredient", dir: "asc" },
   { column: "wt0", dir: "dec" },
@@ -18,7 +19,6 @@ var table = new Tabulator("#example", {
   height: "100%", // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
   data: [{}], //assign data to table
   //layout:"fitColumns", //fit columns to width of table (optional)
-  persistentLayout:true,
   initialSort: defaultSort,
   columns: [
     //Define Table Columns
@@ -33,15 +33,7 @@ var table = new Tabulator("#example", {
         search: true,
         freetext: true,
         allowEmpty: false,
-        searchFunc: async function (term) {
-          let matches = [];
-          searchTable = await fuzzySearch(term);
-          searchTable.forEach((val, idx) => {
-            matches.push(val.name);
-            if (idx >= 10) return;
-          });
-          return matches;
-        },
+        searchFunc: fuzzySearchFunc,
       },
     },
     {
@@ -114,14 +106,15 @@ async function init(){
     let recipe = await fetch(`/api/${recipeId.value}`).then(res => res.json());
     rowData = JSON.parse(recipe.recipeRows);
     columnData = JSON.parse(recipe.recipeColumns);
-    console.log(recipe);
-    table.setColumnLayout(columnData);
     
+    if(recipe.recipeTables > 0)
+      table.setColumnLayout(columnData);
     for(let i = 0; i < recipe.recipeTables; i++){
       addTable(); 
     }
-
     table.setData(rowData);
+    
+
   }catch(err){
     console.log(err);
   }
@@ -163,6 +156,9 @@ document.addEventListener("DOMContentLoaded", function () {
   saveBtn.addEventListener('click', saveTable);
   
   recipeId = document.getElementById('recipe-id');
+  
+  updateRecipeForm = document.getElementById('update-recipe-form');
+  recipeName = document.getElementById('recipe-name');
   
   updateRecipeBtn = document.getElementById('update-recipe');
   updateRecipeBtn.addEventListener('click',updateRecipe)
@@ -266,11 +262,31 @@ function addTable(evt) {
     });
   loadingCursor(false);
 }
-async function updateRecipe(){
+async function updateRecipe(e){
   try{
+    e.preventDefault();
+    let formData = new FormData(updateRecipeForm);
+    let body = {};
+    formData.forEach(function(val,key){
+        body[key] = val;
+    })
+    recipeName.innerHTML = body.name;
     
+    await fetch(`/recipes/${recipeId.value}`, {
+      method: "PUT", // *GET, POST, PUT, DELETE, etc.
+      cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+      credentials: "same-origin", // include, *same-origin, omit
+      headers: {
+        "Content-Type": "application/json",
+      },
+      redirect: "follow", // manual, *follow, error
+      referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+      body: JSON.stringify(body), // body data type must match "Content-Type" header
+    });
+    
+
   }catch(err){
-    
+    console.log(err);
   }
 }
 function updateFlour() {
@@ -379,6 +395,15 @@ async function saveTable(){
     console.log(err);
   }
 
+}
+async function fuzzySearchFunc(term) {
+  let matches = [];
+  searchTable = await fuzzySearch(term);
+  searchTable.forEach((val, idx) => {
+    matches.push(val.name);
+    if (idx >= 10) return;
+  });
+  return matches;
 }
 async function fuzzySearch(term) {
   if (term.length <= 0)

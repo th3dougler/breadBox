@@ -6,6 +6,7 @@ module.exports = {
   getIndex,
   create,
   edit,
+  update,
   getTable,
   delete: deleteItem,
 };
@@ -62,6 +63,18 @@ async function edit(req, res, next) {
     });
   }
 }
+
+async function update(req, res, next){
+    try{
+        await Recipe.findByIdAndUpdate(req.params.id, req.body);
+        
+    } catch (err) {
+        res.render("error", {
+          message: "recipe.js controller - update",
+          error: err,
+        });
+    }
+}
 async function deleteItem(req, res, next) {
   try {
     await Recipe.deleteOne({ _id: req.params.id });
@@ -78,9 +91,7 @@ async function deleteItem(req, res, next) {
 
 async function getTable(req, res, next) {
   try {
-      console.log(req.params)
     let thisRecipe = await Recipe.findById(req.params.id);
-    console.log(thisRecipe);
     return res.send(thisRecipe)
   } catch (err) {
     res.render("error", {
