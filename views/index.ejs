@@ -38,7 +38,7 @@
               <h4>a bread recipe manager for people who manage bread recipes</h4>
               <div class="input-field">
                 <a class="btn-large waves-effect waves-orange transparent" href="/recipes" style="border:2px solid white;">Login</a>
-                <a class="btn-large waves-effect waves-orange transparent" href="#" style="border:2px solid white;">How-To</a>  
+                <a class="btn-large waves-effect waves-orange transparent" href="https://www.bbga.org/files/2009FormulaFormattingSINGLES.pdf" target="_blank" style="border:2px solid white;">How-To</a>  
               </div>
             </div>
           </div>  
@@ -49,16 +49,19 @@
     </div>
     <div class="container">
       <div class="row">
-        <div class="col s12 l3 center">
+        <div class="col s12 m2 l4 center">
           <h4>About</h4>      
         </div>
-        <div class="col l9">
+        <div class="col s12 m10 l4 ">
           <p>Designed by bakers, for bakers.</p>
           <p>Easily build recipes using weights and bakers percentage, reference our comprehensive library of ingredients or create your own custom inventory.
           </p>
           <p>Built with mobile devices in mind, easily build complex recipes on your phone, tablet, or desktop PC</p>
           <p>Export your recipes, or share them with your coworkers, friends, family or strangers on the internet!  We take the grunt work out of formatting and developing your recipes so you can focus on the fun part</p>
           <p><strong>Finally, you have complete control</strong></p>
+        </div>
+        <div class="col s12 m12 l4">
+          <img class="materialboxed" width="100%" src="images/recipe.png">
         </div>
       </div>
     </div>
@@ -81,42 +84,64 @@
             <ul>
               <li>Creating a recipe shouldnt be complicated
                 <ul class="ulPlus">
-                  <li>Search our inventory for countless ingredients</li>
+                  <li>Reference our inventory of common baking ingredients</li>
                   <li>Or fill your personal inventory with custom ingredients</li>
                   <li>Build out your recipes using weights, track and adjust bakers percentage</li>
-                  <!-- <li>Markdown support lets you write out your method with complete formatting control.  Easy to read, easy to understand, easy to learn. </li> -->
                 </ul>
               </li>
             </ul>
+            <img class="materialboxed" width="100%" src="images/recipe.png">
           </div>
           <div id="tab2" class="col ">
             <ul>
               <li>Share your recipes, or keep them all to yourself
                <ul class="ulPlus">
-                  <li>Share a link to your recipe via social media</li>
-                  <li>with our custom tags for your website or forum</li>
-                  <li>or keep your recipes private, so no one else but you knows</li>
+                <li>Send a share a link to your friends</li>
+                <li>Export to popular formats (CSV, XLSX, PDF, JSON)</li>
                 </ul>
               </li>             
             </ul>
+            <img class="materialboxed" width="100%" src="images/share.png">
           </div>
           <div id="tab3" class="col ">
             <ul>
-              <li>Export to popular formats
+              <li>Works on all screen sizes
                <ul class="ulPlus">
-                  <li>Spreadsheet</li>
-                  <li>PDF</li>
-                  <li>CSV, JSON, TXT</li>
-                </ul>
+                <li>Designed to work cross-platform</li>
+                <li>Works great with cellphones, tablets, and on PC</li>
+                <li>Always have access to your recipes</li>
+               </ul>
               </li>             
             </ul>
+            <img class="materialboxed" height="100%" src="images/phone.png">
           </div>
         </div>
       </div>
       
       
     </div>
-
+    <div class="parallax-container" style="height:150px">;
+          <div style=" height: 100%; width: 100%" class="row center">
+            <div class="col s4 white-text ">
+              <h5>breadBox</h5>
+              <p>Brought to you by <a href="https://dougjones.ca/">Doug Jones</a></p>
+              <p>Check out the <a href="https://github.com/th3dougler/breadBox">Github</a></p>
+            </div>
+            <div class="col s4 white-text ">
+              <h5>Contact</h5>
+              <p>Send me an <a target="_blank" href="mailto:th3dougler@gmail.com">e-mail</a></p>
+              <p>Submit a <a href="https://github.com/th3dougler/breadBox/issues">bug report</a></p>
+            </div>
+            <div class="col s4 white-text ">
+              <h5>Links</h5>
+              <p>Read more about<a target="_blank" href="https://www.bbga.org/files/2009FormulaFormattingSINGLES.pdf"> BBGA Recipe Format</a></p>
+              <p><a href="/recipes">Login</a></p>
+            </div>
+          </div>  
+      <div class="parallax" ><img src="images/forno1.jpg" /></div>
+    </div>
+    
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script>
 
@@ -127,7 +152,8 @@
       M.Sidenav.init(elems);
       elems = document.querySelectorAll('.parallax');
       M.Parallax.init(elems);
-       
+      elems = document.querySelectorAll('.materialboxed');
+       M.Materialbox.init(elems);
         
       });
     </script>

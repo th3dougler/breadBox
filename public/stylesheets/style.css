@@ -1,6 +1,11 @@
 body{
   height: 100vh;
 }
+.tabs-content.carousel .carousel-item { height: fit-content !important}
+.tabs-content {height: 800px !important;}
+
+
+
 ul.ulPlus{
     list-style: none;
     margin-left: 0;
