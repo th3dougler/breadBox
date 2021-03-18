@@ -10,13 +10,20 @@ function isLoggedIn(req, res, next){
 
 router.get('/', isLoggedIn, recipeCtrl.index);
 
-router.get('/getIndex', isLoggedIn, recipeCtrl.getIndex);
+
 
 router.post('/', isLoggedIn, recipeCtrl.create);
 
 
 router.get('/:id/edit', isLoggedIn, recipeCtrl.edit);
 
+
+
+
 router.delete('/:id', isLoggedIn, recipeCtrl.delete);
+
+
+
+
 
 module.exports = router;

@@ -8,9 +8,10 @@ var recipeSchema = new mongoose.Schema({
     private: {type: Boolean, default: true},
     isIngredient: {type: Boolean, default: false},
     method: String,
+    recipeRows: {type: String, default: "{}"},
+    recipeColumns: {type: String, default: "{}"},
+    recipeTables: {type: Number, default: 0},
     tags: [String],
-    inventory:  [{type: mongoose.SchemaTypes.ObjectId, ref: "Ingredient"}],
-    userInventory: [{type: mongoose.SchemaTypes.ObjectId, ref: "CustomIngredient"}]
 },{
     timestamps: true,
 })

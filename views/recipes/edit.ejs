@@ -27,10 +27,10 @@
       </a>
       <ul>
         <li>
-          <a href="#" class="btn-floating green"><i class="material-icons">share</i>Share</a>
+          <a id="share" class="btn-floating green"><i class="material-icons">share</i>Share</a>
         </li>
         <li>
-          <a href="/recipes/" class="btn-floating blue"><i class="material-icons">exit_to_app</i>Back</a>
+          <button id="save-btn" class="btn-floating blue"><i class="material-icons">exit_to_app</i>Back</button>
         </li>
         <li>
           <a id="add-new-table" href="#" class="btn-floating red"><i class="material-icons">add</i>Add</a>
@@ -52,14 +52,6 @@
                     <input name="name" id="name" type="text" value= "<%= recipe.name %>">
                     <label for="name">Name: </label>
                   </div>
-                  <div class="switch col">
-                    <label>
-                      Imperial
-                      <input  class="right" type="checkbox" checked>
-                      <span class="lever"></span>
-                      Metric
-                    </label>
-                  </div>
                 </div>
                 <div class="row">
                   <div class="input-field col s12">
@@ -68,8 +60,9 @@
                   </div>
                 </div>
                 <div class="row">
+                  <input id="recipe-id" type="hidden" value="<%= recipe._id %>"/>
                   <div class="right">
-                  <button type="submit" class="btn-flat waves-effect waves-orange">Update</button>
+                  <button type="submit" id="update-recipe" class="btn-flat waves-effect waves-orange">Update</button>
                   
                   </div>
                 </div>
@@ -83,10 +76,10 @@
 
           <div id="example"></div>  
         <div class="col s12">
+          <div class="input-field">
           <button id="add-row-btn" class="btn red waves-effect waves-light"><i class="material-icons">add</i></button>
           <button id="sort-btn" class="btn yellow waves-effect waves-light"><i class="material-icons">sort</i></button>
-          <button id="toggle-bp" class="btn orange darken-3 waves-effect waves-light">Weight</button>
-          
+        </div>
         </div>
       </div>
       </div>

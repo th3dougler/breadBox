@@ -1,18 +1,24 @@
 loadingCursor(true);
-var tabledata = [{}]; //= [{ id: 1, ingredient: " ", isflour: false, bp: 1.5, wt: 10 }];
+
 var searchTable;
 var tableLength = 0;
+let recipeId;
+var columnData = {};
+var rowData = {};
+
 var defaultSort = [
   { column: "ingredient", dir: "asc" },
   { column: "wt0", dir: "dec" },
   { column: "isflour", dir: "dec" },
 ];
+
 var table = new Tabulator("#example", {
   history: true,
   tabEndNewRow: true,
   height: "100%", // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
-  data: tabledata, //assign data to table
+  data: [{}], //assign data to table
   //layout:"fitColumns", //fit columns to width of table (optional)
+  persistentLayout:true,
   initialSort: defaultSort,
   columns: [
     //Define Table Columns
@@ -20,7 +26,6 @@ var table = new Tabulator("#example", {
       title: "Ingredient",
       field: "ingredient",
       width: 150,
-      mutatorEdit: updateId,
       frozen: true,
       editor: "autocomplete",
       sorter: "string",
@@ -37,24 +42,6 @@ var table = new Tabulator("#example", {
           });
           return matches;
         },
-      },
-    },
-    { title: "id", field: "id", visible: false },
-
-    {
-      title: `<i class="material-icons">delete</i>`,
-      field: "delete",
-      formatter: "tickCross",
-      frozen: true,
-      headerSort: false,
-      maxWidth: 100,
-      formatterParams: {
-        tickElement: `<i class="material-icons">delete_forever</i>`,
-        crossElement: `<i class="material-icons red-text">delete_forever</i>`,
-      },
-      cellClick: function (e, cell) {
-        let row = cell.getRow();
-        if (table.rowManager.activeRowsCount > 1) row.delete();
       },
     },
     {
@@ -79,8 +66,7 @@ var table = new Tabulator("#example", {
         {
           title: "BP (%)",
           field: "bp0",
-          topCalc: "sum",
-          topCalcParams: { precision: 2 },
+          topCalc: topPercent,
           formatter: formatPercent,
           editor: false,
           editorParams: {
@@ -102,14 +88,62 @@ var table = new Tabulator("#example", {
         },
       ],
     },
+    {
+      title: `<i class="material-icons">delete</i>`,
+      field: "delete",
+      formatter: "tickCross",
+      frozen: true,
+      headerSort: false,
+      maxWidth: 100,
+      formatterParams: {
+        tickElement: `<i class="material-icons">delete_forever</i>`,
+        crossElement: `<i class="material-icons red-text">delete_forever</i>`,
+      },
+      cellClick: function (e, cell) {
+        let row = cell.getRow();
+        row.delete();
+        if (table.rowManager.activeRowsCount < 1) 
+          addRow();
+      },
+    },
   ],
 });
 
+async function init(){
+  try{
+    let recipe = await fetch(`/api/${recipeId.value}`).then(res => res.json());
+    rowData = JSON.parse(recipe.recipeRows);
+    columnData = JSON.parse(recipe.recipeColumns);
+    console.log(recipe);
+    table.setColumnLayout(columnData);
+    
+    for(let i = 0; i < recipe.recipeTables; i++){
+      addTable(); 
+    }
+
+    table.setData(rowData);
+  }catch(err){
+    console.log(err);
+  }
+
+  
+}
+
+
 function formatPercent(cell){
-  if (  isNaN((cell.getValue() * 100).toFixed(1))  ){
+  if (  isNaN(cell.getValue()) || !isFinite(cell.getValue())  ){
     return ""
   } else
    return (cell.getValue() * 100).toFixed(1) + "%";
+}
+function topPercent(values){
+  if (values.length === 0)
+    return
+  let sum = values.reduce((pv,cv)=>pv+cv,)
+  if (isNaN(sum) || !isFinite(sum))
+    return
+    
+  return (sum*100).toFixed(1)+"%";
 }
 function loadingCursor(bool) {
   if (bool) document.body.style.cursor = "wait";
@@ -124,13 +158,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
   var sortBtn = document.getElementById("sort-btn");
   sortBtn.addEventListener("click", sortRecipe);
-
+  
+  var saveBtn = document.getElementById('save-btn')
+  saveBtn.addEventListener('click', saveTable);
+  
+  recipeId = document.getElementById('recipe-id');
+  
+  updateRecipeBtn = document.getElementById('update-recipe');
+  updateRecipeBtn.addEventListener('click',updateRecipe)
   var elems = document.querySelectorAll(".fixed-action-btn");
-  M.FloatingActionButton.init(elems, { direction: "left" });
+  M.FloatingActionButton.init(elems, { direction: "left", hoverEnabled: false, });
   elems = document.querySelectorAll(".collapsible");
   M.Collapsible.init(elems);
+  
+  init();
   loadingCursor(false);
 });
+
+
 function addRow() {
   updateFlour();
   table.addRow({});
@@ -147,8 +192,7 @@ var fdColumns = {
     {
       title: "BP (%)",
       field: "bpf",
-      topCalc: "sum",
-      topCalcParams: { precision: 2 },
+      topCalc: topPercent,
       formatter: formatPercent,
       editor: false,
       editorParams: {
@@ -184,8 +228,7 @@ function addTable(evt) {
         {
           title: "BP (%)",
           field: `bp${tableLength}`,
-          topCalc: "sum",
-          topCalcParams: { precision: 2 },
+          topCalc: topPercent,
           formatter: formatPercent,
           editor: false,
           editorParams: {
@@ -223,7 +266,13 @@ function addTable(evt) {
     });
   loadingCursor(false);
 }
-
+async function updateRecipe(){
+  try{
+    
+  }catch(err){
+    
+  }
+}
 function updateFlour() {
   let flourColumn = table.getColumn("isflour");
   let flourWeight = [];
@@ -273,7 +322,6 @@ function updateFlour() {
       }
     }
   });
-console.log(flourWeight, elseWeight);
 /* Calculate Bakers Percentage */
   activeRows.forEach((row) => {
     let data = row.getData();
@@ -288,7 +336,6 @@ console.log(flourWeight, elseWeight);
       else if(tableLength > 0)
         formulaTotal = (!isNaN(data[`wt${i}`]))? Number.parseFloat(data[`wt${i}`]): 0;
     }
-    console.log(formulaTotal, tableTotal);
     if(tableLength > 0){
       row.update({"wtf": formulaTotal - tableTotal})
       let bpCell = row.getCell(`bpf`);
@@ -296,26 +343,42 @@ console.log(flourWeight, elseWeight);
     }
 
   });
+  saveTable();
 }
 
-function updateId(value, data, type, params, component) {
-  //value - original value of the cell
-  //data - the data for the row
-  //type - the type of mutation occurring  (data|edit)
-  //params - the mutatorParams object from the column definition
-  //component - when the "type" argument is "edit", this contains the cell component for the edited cell, otherwise it is the column component for the column
+async function saveTable(){
+  try{
+    var tableData = table.getData();
+    var columnData = table.getColumnLayout();
+    
+    await fetch(`/api/${recipeId.value}?data=col&table=${tableLength}`, {
+      method: "PUT", // *GET, POST, PUT, DELETE, etc.
+      cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+      credentials: "same-origin", // include, *same-origin, omit
+      headers: {
+        "Content-Type": "application/json",
+      },
+      redirect: "follow", // manual, *follow, error
+      referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+      body: JSON.stringify(columnData), // body data type must match "Content-Type" header
+    });
+   await fetch(`/api/${recipeId.value}?data=row`, {
+      method: "PUT", // *GET, POST, PUT, DELETE, etc.
+      cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+      credentials: "same-origin", // include, *same-origin, omit
+      headers: {
+        "Content-Type": "application/json",
+      },
+      redirect: "follow", // manual, *follow, error
+      referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+      body: JSON.stringify(tableData), // body data type must match "Content-Type" header
+    });
 
-  let idx = searchTable.findIndex((el) => {
-    return el.name.toUpperCase() == value.toUpperCase();
-  });
-  let row = component.getRow();
-  if (idx >= 0) {
-    row.update({ id: searchTable[idx]._id });
-  } else {
-    row.update({ id: "CREATE" });
   }
-  // data.update({id:searchTable[idx]._id });
-  return value; //return the new value for the cell data.
+  catch(err){
+    console.log(err);
+  }
+
 }
 async function fuzzySearch(term) {
   if (term.length <= 0)

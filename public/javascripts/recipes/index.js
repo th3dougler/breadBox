@@ -74,7 +74,7 @@ async function init() {
   document.body.style.cursor = "wait";
   try {
     
-    recipeList = await fetch("/recipes/getIndex").then(res => res.json());
+    recipeList = await fetch("/api/getIndex").then(res => res.json());
     await render();
     document.body.style.cursor = "default";
   } catch (err) {
