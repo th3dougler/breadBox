@@ -11,7 +11,8 @@ var recipeSchema = new mongoose.Schema({
     recipeRows: {type: String, default: "[{}]"},
     recipeColumns: {type: String, default: "[{}]"},
     recipeTables: {type: Number, default: 0},
-    tags: [String],
+    tableHeaders: [{type: String}],
+    tags: [{type: String}],
 },{
     timestamps: true,
 })

@@ -1,7 +1,15 @@
 const User = require('../models/user');
 const CustomIngredient = require('../models/customIngredient');
+const Ingredient = require('../models/ingredient');
 var FuzzySearch = require('fuzzy-search');
-
+let staticIngredients;
+(async ()=>{
+        try{
+            staticIngredients = await Ingredient.find({},{"_id":0,"name":1}); 
+        } catch(err){
+            console.log(err);
+        }
+    })()
 module.exports = {
     index,
     getIndex,
@@ -39,9 +47,11 @@ async function getIndex(req, res, next){
 
 async function getFuzzy(req, res, next){
     try{
-       let arr = await CustomIngredient.find({user: req.user._id});
-       const searcher = new FuzzySearch(arr, ['name']);
+       let arr = await CustomIngredient.find({user: req.user._id},{"_id":0,"name":1});
+       let combinedArray = arr.concat(staticIngredients);
+       const searcher = new FuzzySearch(combinedArray, ['name']);
        const result = searcher.search(req.query.search);
+       result.splice(10);
        res.send(result);
     }catch(err){
         res.render('error',{

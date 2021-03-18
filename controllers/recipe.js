@@ -66,7 +66,8 @@ async function edit(req, res, next) {
 
 async function update(req, res, next){
     try{
-        await Recipe.findByIdAndUpdate(req.params.id, req.body);
+        await Recipe.findByIdAndUpdate(req.params.id, req.body,
+          { useFindAndModify: false });
         
     } catch (err) {
         res.render("error", {

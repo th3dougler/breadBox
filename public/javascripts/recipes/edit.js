@@ -6,9 +6,9 @@ let recipeId;
 var columnData = {};
 var rowData = {};
 var updateRecipeForm;
+var collapsible;
 let recipeName;
 var defaultSort = [
-  { column: "ingredient", dir: "asc" },
   { column: "wt0", dir: "dec" },
   { column: "isflour", dir: "dec" },
 ];
@@ -26,7 +26,7 @@ var table = new Tabulator("#example", {
       title: "Ingredient",
       field: "ingredient",
       width: 150,
-      frozen: true,
+      frozen: false,
       editor: "autocomplete",
       sorter: "string",
       editorParams: {
@@ -94,49 +94,58 @@ var table = new Tabulator("#example", {
       cellClick: function (e, cell) {
         let row = cell.getRow();
         row.delete();
-        if (table.rowManager.activeRowsCount < 1) 
-          addRow();
+        if (table.rowManager.activeRowsCount < 1) addRow();
       },
     },
   ],
 });
 
-async function init(){
-  try{
-    let recipe = await fetch(`/api/${recipeId.value}`).then(res => res.json());
+async function init() {
+  try {
+    let recipe = await fetch(`/api/${recipeId.value}`).then((res) =>
+      res.json()
+    );
     rowData = JSON.parse(recipe.recipeRows);
     columnData = JSON.parse(recipe.recipeColumns);
-    
-    if(recipe.recipeTables > 0)
-      table.setColumnLayout(columnData);
-    for(let i = 0; i < recipe.recipeTables; i++){
-      addTable(); 
+    let tableHeaderArr = recipe.tableHeaders;
+    if (recipe.recipeTables > 0) table.setColumnLayout(columnData);
+    for (let i = 0; i < recipe.recipeTables; i++) {
+      addTable();
     }
-    table.setData(rowData);
-    
-
-  }catch(err){
+    table.setData(rowData).then(function () {
+      table
+        .updateColumnDefinition("ingredient", {
+          editorParams: {
+            freetext: true,
+            searchFunc: fuzzySearchFunc,
+          },
+        })
+        .then(function () {
+          table.moveColumn("ingredient", "isflour", false);
+          if (recipe.recipeTables > 0) {
+            let tableHeaders = document.querySelectorAll(".table-name");
+            tableHeaders.forEach((table, idx) => {
+              table.value = tableHeaderArr[idx];
+            });
+          }
+        });
+    });
+  } catch (err) {
     console.log(err);
   }
-
-  
 }
 
-
-function formatPercent(cell){
-  if (  isNaN(cell.getValue()) || !isFinite(cell.getValue())  ){
-    return ""
-  } else
-   return (cell.getValue() * 100).toFixed(1) + "%";
+function formatPercent(cell) {
+  if (isNaN(cell.getValue()) || !isFinite(cell.getValue())) {
+    return "";
+  } else return (cell.getValue() * 100).toFixed(1) + "%";
 }
-function topPercent(values){
-  if (values.length === 0)
-    return
-  let sum = values.reduce((pv,cv)=>pv+cv,)
-  if (isNaN(sum) || !isFinite(sum))
-    return
-    
-  return (sum*100).toFixed(1)+"%";
+function topPercent(values) {
+  if (values.length === 0) return;
+  let sum = values.reduce((pv, cv) => pv + cv);
+  if (isNaN(sum) || !isFinite(sum)) return;
+
+  return (sum * 100).toFixed(1) + "%";
 }
 function loadingCursor(bool) {
   if (bool) document.body.style.cursor = "wait";
@@ -151,33 +160,84 @@ document.addEventListener("DOMContentLoaded", function () {
 
   var sortBtn = document.getElementById("sort-btn");
   sortBtn.addEventListener("click", sortRecipe);
+
+  var saveBtn = document.getElementById("save-btn");
+  saveBtn.addEventListener("click", saveTable);
+
+  recipeId = document.getElementById("recipe-id");
+
+  updateRecipeForm = document.getElementById("update-recipe-form");
+  recipeName = document.getElementById("recipe-name");
+
+  updateRecipeBtn = document.getElementById("update-recipe");
+  updateRecipeBtn.addEventListener("click", updateRecipe);
+  isPrivate = document.getElementById('is-private');
+  isPrivate.addEventListener('change', async function(e){
+    try{
+      let body = {
+        private: isPrivate.checked,
+      }
+      await fetch(`/recipes/${recipeId.value}`, {
+        method: "PUT", // *GET, POST, PUT, DELETE, etc.
+        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: "same-origin", // include, *same-origin, omit
+        headers: {
+          "Content-Type": "application/json",
+        },
+        redirect: "follow", // manual, *follow, error
+        referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        body: JSON.stringify(body), // body data type must match "Content-Type" header
+      });
   
-  var saveBtn = document.getElementById('save-btn')
-  saveBtn.addEventListener('click', saveTable);
+    }catch(err){
+      console.log(err);
+    }
+
+  })
   
-  recipeId = document.getElementById('recipe-id');
+  dlCSV = document.getElementById("dlCSV");
+  dlCSV.addEventListener('click', function(){
+    table.download("csv", "data.csv");
+  })
+  dlJSON = document.getElementById("dlJSON");
+  dlJSON.addEventListener('click', function(){
+    table.download("json", "data.json");
+  })
+  dlXLSX = document.getElementById("dlXLSX");
+  dlXLSX.addEventListener('click', function(){
+    table.download("xlsx", "data.xlsx", {});
+  })
+  dlPDF = document.getElementById("dlPDF");
+  dlPDF.addEventListener('click', function(){
+    table.downloadToTab("pdf");
+  })
+  dlHTML = document.getElementById("dlHTML");
+  dlHTML.addEventListener('click', function(){
+    table.download("html", "data.html", {style:true});
+  })
   
-  updateRecipeForm = document.getElementById('update-recipe-form');
-  recipeName = document.getElementById('recipe-name');
-  
-  updateRecipeBtn = document.getElementById('update-recipe');
-  updateRecipeBtn.addEventListener('click',updateRecipe)
   var elems = document.querySelectorAll(".fixed-action-btn");
-  M.FloatingActionButton.init(elems, { direction: "left", hoverEnabled: false, });
-  elems = document.querySelectorAll(".collapsible");
-  M.Collapsible.init(elems);
-  
+  M.FloatingActionButton.init(elems, {
+    direction: "left",
+    hoverEnabled: false,
+  });
+  collapsible = document.querySelectorAll(".collapsible");
+  M.Collapsible.init(collapsible);
+  elems = document.querySelectorAll('.modal');
+  M.Modal.init(elems);
+
   init();
   loadingCursor(false);
 });
 
-
 function addRow() {
   updateFlour();
+  saveTable();
   table.addRow({});
 }
 function sortRecipe() {
   updateFlour();
+  saveTable();
   table.setSort(defaultSort);
 }
 
@@ -219,7 +279,7 @@ function addTable(evt) {
   tableLength++;
   table
     .addColumn({
-      title: ` <div><button class="delete-table-btn btn-flat red-text" id="deleteColumn_${tableLength}">x</button> <input type="text" size="6" value="New Table${tableLength}" required /></div>`,
+      title: ` <div><button class="delete-table-btn btn-flat red-text" id="deleteColumn_${tableLength}">x</button> <input class="table-name" type="text" size="6" value="New Table${tableLength}" required /></div>`,
       columns: [
         {
           title: "BP (%)",
@@ -249,10 +309,21 @@ function addTable(evt) {
     .then(function () {
       table.addColumn(fdColumns);
       let tableButton = document.getElementById(`deleteColumn_${tableLength}`);
+
       tableButton.addEventListener("click", async function () {
-        table.deleteColumn(`bp${tableLength}`);
-        table.deleteColumn(`wt${tableLength}`);
+        let allRows = table.getRows();
         tableLength--;
+        allRows.forEach((row,idx)=>{
+          row.getCell(`bp${tableLength+1}`).setValue("");
+          row.getCell(`wt${tableLength+1}`).setValue("");
+          if (tableLength === 0) {
+            row.getCell(`bpf`).setValue("");
+            row.getCell(`wtf`).setValue("");
+          }
+        })
+        table.deleteColumn(`bp${tableLength+1}`);
+        table.deleteColumn(`wt${tableLength+1}`);
+        
 
         if (tableLength === 0) {
           table.deleteColumn(`bpf`);
@@ -260,18 +331,22 @@ function addTable(evt) {
         }
       });
     });
+    saveTable();
   loadingCursor(false);
 }
-async function updateRecipe(e){
-  try{
+async function updateRecipe(e) {
+  try {
     e.preventDefault();
+    var instance = M.Collapsible.getInstance(collapsible[0]);
+    instance.close(0);
+
     let formData = new FormData(updateRecipeForm);
     let body = {};
-    formData.forEach(function(val,key){
-        body[key] = val;
-    })
+    formData.forEach(function (val, key) {
+      body[key] = val;
+    });
     recipeName.innerHTML = body.name;
-    
+
     await fetch(`/recipes/${recipeId.value}`, {
       method: "PUT", // *GET, POST, PUT, DELETE, etc.
       cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
@@ -283,9 +358,9 @@ async function updateRecipe(e){
       referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
       body: JSON.stringify(body), // body data type must match "Content-Type" header
     });
-    
 
-  }catch(err){
+    saveTable();
+  } catch (err) {
     console.log(err);
   }
 }
@@ -293,7 +368,6 @@ function updateFlour() {
   let flourColumn = table.getColumn("isflour");
   let flourWeight = [];
   let elseWeight = [];
-
   let activeRows = [];
 
   /* Look down isFlour column, traverse and build flour/else totals
@@ -338,7 +412,7 @@ function updateFlour() {
       }
     }
   });
-/* Calculate Bakers Percentage */
+  /* Calculate Bakers Percentage */
   activeRows.forEach((row) => {
     let data = row.getData();
     let tableTotal = 0;
@@ -346,27 +420,37 @@ function updateFlour() {
     for (let i = 0; i <= tableLength; i++) {
       let bpCell = row.getCell(`bp${i}`);
       bpCell.setValue(data[`wt${i}`] / flourWeight[i]);
-      if (i> 0 && tableLength > 0){
-        tableTotal +=(!isNaN(data[`wt${i}`]))? Number.parseFloat(data[`wt${i}`]):0;
-      }
-      else if(tableLength > 0)
-        formulaTotal = (!isNaN(data[`wt${i}`]))? Number.parseFloat(data[`wt${i}`]): 0;
+      if (i > 0 && tableLength > 0) {
+        tableTotal += !isNaN(data[`wt${i}`])
+          ? Number.parseFloat(data[`wt${i}`])
+          : 0;
+      } else if (tableLength > 0)
+        formulaTotal = !isNaN(data[`wt${i}`])
+          ? Number.parseFloat(data[`wt${i}`])
+          : 0;
     }
-    if(tableLength > 0){
-      row.update({"wtf": formulaTotal - tableTotal})
+    if (tableLength > 0) {
+      row.update({ wtf: formulaTotal - tableTotal });
       let bpCell = row.getCell(`bpf`);
-      bpCell.setValue(Number.parseFloat(data[`wtf`]) / flourWeight[tableLength + 1]);
+      bpCell.setValue(
+        Number.parseFloat(data[`wtf`]) / flourWeight[tableLength + 1]
+      );
     }
-
   });
   saveTable();
 }
 
-async function saveTable(){
-  try{
+async function saveTable(e = null) {
+  try {
     var tableData = table.getData();
     var columnData = table.getColumnLayout();
-    
+    var tableHeaders = document.querySelectorAll(".table-name");
+    var headerQueryList = "";
+    if (tableHeaders.length > 0) {
+      tableHeaders.forEach((header, idx) => {
+        headerQueryList += `&${idx + 1}=${header.value}`;
+      });
+    }
     await fetch(`/api/${recipeId.value}?data=col&table=${tableLength}`, {
       method: "PUT", // *GET, POST, PUT, DELETE, etc.
       cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
@@ -378,7 +462,7 @@ async function saveTable(){
       referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
       body: JSON.stringify(columnData), // body data type must match "Content-Type" header
     });
-   await fetch(`/api/${recipeId.value}?data=row`, {
+    await fetch(`/api/${recipeId.value}?data=row${headerQueryList}`, {
       method: "PUT", // *GET, POST, PUT, DELETE, etc.
       cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
       credentials: "same-origin", // include, *same-origin, omit
@@ -389,12 +473,12 @@ async function saveTable(){
       referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
       body: JSON.stringify(tableData), // body data type must match "Content-Type" header
     });
-
-  }
-  catch(err){
+    if (e !== null){
+      window.location.replace("/recipes");
+    }
+  } catch (err) {
     console.log(err);
   }
-
 }
 async function fuzzySearchFunc(term) {
   let matches = [];
@@ -406,8 +490,7 @@ async function fuzzySearchFunc(term) {
   return matches;
 }
 async function fuzzySearch(term) {
-  if (term.length <= 0)
-    term = "";
+  if (term.length <= 0) term = "";
 
   loadingCursor(true);
   try {

@@ -35,10 +35,7 @@
           <a id="share" href="#share-modal"class="btn-floating green modal-trigger"><i class="material-icons">share</i>Share</a>
         </li>
         <li>
-          <button id="save-btn" class="btn-floating blue"><i class="material-icons">exit_to_app</i>Back</button>
-        </li>
-        <li>
-          <a id="add-new-table" href="#" class="btn-floating red"><i class="material-icons">add</i>Add</a>
+          <a href="/recipes" id="home-btn" class="btn-floating blue"><i class="material-icons">exit_to_app</i>Back</a>
         </li>
       </ul>
     </div>
@@ -53,7 +50,7 @@
             <p>
               <label>
                 <% let isPrivate = recipe.private %> 
-                <input type="checkbox" id="is-private" class="filled-in" checked="<%= (recipe.private)? "checked":"" %>" />
+                <input type="checkbox" class="filled-in" disabled="disabled" checked="<%= (recipe.private)? "checked":"" %>  checked" />
                 <span>Private</span>
               </label>
             </p>
@@ -79,51 +76,21 @@
             <li>
               <div class="collapsible-header">
                 <i class="material-icons">filter_drama</i><span id="recipe-name"><%= recipe.name %></span> 
+                <input id="recipe-id" type="hidden" value="<%= recipe._id %>"/>
               </div>
-              <div class="collapsible-body">
-              <form id="update-recipe-form">
-                <div class="row">
-                  <div class="input-field col">
-                    <input name="name" id="name" type="text" value= "<%= recipe.name %>">
-                    <label for="name">Name: </label>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="input-field col s12">
-                    <input name="description" id="description" type="text" value= "<%= recipe.description %>">
-                    <label for="description">Description: </label>
-                  </div>
-                </div>
-                <div class="row">
-                  
-                  <div class="right">
-                  <button type="submit" id="update-recipe" class="btn-flat waves-effect waves-orange">Update</button>
-                  
-                  </div>
-                </div>
-              </form>
-              <input id="recipe-id" type="hidden" value="<%= recipe._id %>"/>
-            </div>
             </li>
           </ul>
         </div>
       </div>
-      <div class="row">
-
+      <div class="row"></div>
           <div id="example"></div>  
-        <div class="col s12">
-          <div class="input-field">
-          <button id="add-row-btn" class="btn red waves-effect waves-light"><i class="material-icons">add</i></button>
-          <button id="sort-btn" class="btn yellow waves-effect waves-light"><i class="material-icons">sort</i></button>
-        </div>
-        </div>
       </div>
       </div>
       
         
     </div>
     <script type="text/javascript" src="/tabulator/js/tabulator.js"></script>
-    <script src="/javascripts/recipes/edit.js"></script>
+    <script src="/javascripts/readonly.js"></script>
     <%- include('../partials/foot') %>
   </body>
 </html>

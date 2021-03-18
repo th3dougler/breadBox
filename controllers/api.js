@@ -4,6 +4,8 @@ const Recipe = require("../models/recipe");
 module.exports = {
   getIndex,
   getTable,
+  getReadOnly,
+  getReadOnlyRecipe,
   update,
 };
 
@@ -30,11 +32,49 @@ async function getTable(req, res, next) {
     });
   }
 }
+async function getReadOnly(req,res,next){
+  try{
+    let thisRecipe = await Recipe.findById(req.params.id);
+    if (thisRecipe.private === false){
+      res.render('api/readonly',{
+      title: `${thisRecipe.name}`,
+      recipe: thisRecipe,
+      });
+
+    }else{
+      res.send("Recipe is private, or URL is malformed")
+    }
+  }catch{
+    res.render("error", {
+      message: "recipe.js controller - getReadOnly",
+      error: err,
+    });
+  }
+}
+
+async function getReadOnlyRecipe(req,res,next){
+  try{
+    let thisRecipe = await Recipe.findById(req.params.id);
+    if (thisRecipe.private === false){
+      res.send(thisRecipe);
+    }else{
+      res.send("Recipe is private, or URL is malformed")
+    }
+  }catch{
+    res.render("error", {
+      message: "recipe.js controller - getReadOnly",
+      error: err,
+    });
+  }
+}
+
 
 async function update(req, res, next) {
   try {
-    let tables = Number.parseInt(req.query.table);
+
+    
     if(req.query.data == "col"){
+      let tables = Number.parseInt(req.query.table);
       await Recipe.findByIdAndUpdate(
         req.params.id,
         {
@@ -44,10 +84,12 @@ async function update(req, res, next) {
         { useFindAndModify: false }
       );
     }else{
+      delete req.query.data;
       await Recipe.findByIdAndUpdate(
         req.params.id,
         {
           recipeRows: JSON.stringify(req.body),
+          tableHeaders: Object.values(req.query),
         },
         { useFindAndModify: false }
       );

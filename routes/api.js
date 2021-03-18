@@ -8,6 +8,9 @@ function isLoggedIn(req, res, next){
     }
     res.redirect("/auth/google");
 }
+router.get('/pub/:id', apiCtrl.getReadOnly);
+router.get('/pub/:id/get', apiCtrl.getReadOnlyRecipe);
+
 
 router.get('/getIndex', isLoggedIn, apiCtrl.getIndex);
 
