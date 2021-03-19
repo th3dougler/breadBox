@@ -17,9 +17,14 @@ Easily represent your recipes in terms of bakers percentage, export to multiple 
 
 
 ## Technologies Used
-Javascript, Node JS, Mongoose, MongoDB
-EJS, HTML
-Materialize CSS
+
+Node, Express JS , MongoDB
+
+EJS + Materialize CSS
+
+Tables: [Tabulator](http://tabulator.info/)
+Fuzzy Search: [fuzzy-search](https://github.com/wouter2203/fuzzy-search#readme)
+[Passport.js](http://www.passportjs.org/docs/oauth2-api/)
 
 ## Views
 
