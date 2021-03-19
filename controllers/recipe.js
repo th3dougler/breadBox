@@ -10,7 +10,7 @@ module.exports = {
   getTable,
   delete: deleteItem,
 };
-
+//get index view
 function index(req, res, next) {
   res.render("recipes/index.ejs", {
     title: `breadBox - Recipes - ${req.user.name}`,
@@ -18,6 +18,8 @@ function index(req, res, next) {
     active: "recipes",
   });
 }
+
+//get array of all recipes owned by user
 async function getIndex(req, res, next) {
   try {
     let result = await Recipe.find({ user: req.user._id });
@@ -30,9 +32,9 @@ async function getIndex(req, res, next) {
   }
 }
 
+//create new recipe document
 async function create(req, res, next) {
   try {
-    let thisUser = await User.findById(req.user._id);
     let newRecipe = {
       name: req.body.name,
       description: req.body.description,
@@ -47,6 +49,8 @@ async function create(req, res, next) {
     });
   }
 }
+
+//get recipe edit view
 async function edit(req, res, next) {
   try {
     let thisRecipe = await Recipe.findById(req.params.id);
@@ -64,6 +68,7 @@ async function edit(req, res, next) {
   }
 }
 
+//recipe update function, only with correctly formed data (i.e. updating name, description via form)
 async function update(req, res, next){
     try{
         await Recipe.findByIdAndUpdate(req.params.id, req.body,

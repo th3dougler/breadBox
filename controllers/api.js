@@ -8,7 +8,7 @@ module.exports = {
   getReadOnlyRecipe,
   update,
 };
-
+/* get array of all recipes owned by user*/
 async function getIndex(req, res, next) {
   try {
     let result = await Recipe.find({ user: req.user._id });
@@ -21,6 +21,7 @@ async function getIndex(req, res, next) {
   }
 }
 
+/* get specific recipe*/
 async function getTable(req, res, next) {
   try {
     let thisRecipe = await Recipe.findById(req.params.id);
@@ -32,6 +33,7 @@ async function getTable(req, res, next) {
     });
   }
 }
+/* get readonly recipe view, only if private=false*/
 async function getReadOnly(req,res,next){
   try{
     let thisRecipe = await Recipe.findById(req.params.id);
@@ -51,7 +53,7 @@ async function getReadOnly(req,res,next){
     });
   }
 }
-
+//get singular recipe, if private=false
 async function getReadOnlyRecipe(req,res,next){
   try{
     let thisRecipe = await Recipe.findById(req.params.id);
@@ -68,7 +70,8 @@ async function getReadOnlyRecipe(req,res,next){
   }
 }
 
-
+//crazy convaluted controller function - 
+//parses table data into appropriate sections of recipe model
 async function update(req, res, next) {
   try {
 

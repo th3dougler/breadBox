@@ -1,4 +1,3 @@
-loadingCursor(true);
 
 var searchTable;
 var tableLength = 0;
@@ -8,11 +7,15 @@ var rowData = {};
 var updateRecipeForm;
 var collapsible;
 let recipeName;
+
+//default sort for table, called by yellow sort button
 var defaultSort = [
   { column: "wt0", dir: "dec" },
   { column: "isflour", dir: "dec" },
 ];
 
+
+//table initial column buildout
 var table = new Tabulator("#example", {
   history: true,
   tabEndNewRow: true,
@@ -42,7 +45,7 @@ var table = new Tabulator("#example", {
       formatter: "tickCross",
       sorter: "boolean",
       maxWidth: 100,
-      cellEdited: updateFlour,
+      cellEdited: render,
       formatterParams: {
         tickElement: `<i class="material-icons green-text">check_box</i>`,
         crossElement: `<i class="material-icons">check_box_outline_blank</i>`,
@@ -71,7 +74,7 @@ var table = new Tabulator("#example", {
           field: "wt0",
           topCalc: "sum",
           topCalcParams: { precision: 2 },
-          cellEdited: updateFlour,
+          cellEdited: render,
           editor: "number",
           sorter: "number",
           editorParams: {
@@ -100,6 +103,15 @@ var table = new Tabulator("#example", {
   ],
 });
 
+
+/* during init, pull recipe data by get request, parse the
+relevant json data and pipe it into the table,
+
+because the script doesnt do a good job of remembering table layouts, 
+there is code that runs addTable and sets the table headers based on stored values in my recipe model
+
+there is no render function because the table does its own thing
+*/
 async function init() {
   try {
     let recipe = await fetch(`/api/${recipeId.value}`).then((res) =>
@@ -134,12 +146,14 @@ async function init() {
     console.log(err);
   }
 }
-
+//helper function for formatting bakers percentage in a more human-readable format
 function formatPercent(cell) {
   if (isNaN(cell.getValue()) || !isFinite(cell.getValue()) || cell.getValue() == 0) {
     return "";
   } else return (cell.getValue() * 100).toFixed(1) + "%";
 }
+
+//helper function for representing recipe total percentage at top of screen
 function topPercent(values) {
   if (values.length === 0) return;
   let sum = values.reduce((pv, cv) => pv + cv);
@@ -147,10 +161,10 @@ function topPercent(values) {
 
   return (sum * 100).toFixed(1) + "%";
 }
-function loadingCursor(bool) {
-  if (bool) document.body.style.cursor = "wait";
-  else document.body.style.cursor = "default";
-}
+
+
+
+// grab necessary dom elements
 document.addEventListener("DOMContentLoaded", function () {
   var addNewTable = document.getElementById("add-new-table");
   addNewTable.addEventListener("click", addTable);
@@ -227,20 +241,20 @@ document.addEventListener("DOMContentLoaded", function () {
   M.Modal.init(elems);
 
   init();
-  loadingCursor(false);
 });
 
 function addRow() {
-  updateFlour();
+  render();
   saveTable();
   table.addRow({});
 }
+
 function sortRecipe() {
-  updateFlour();
+  render();
   saveTable();
   table.setSort(defaultSort);
 }
-
+//final dough column template
 var fdColumns = {
   title: `Final Dough`,
   field: "fd",
@@ -261,7 +275,7 @@ var fdColumns = {
       field: "wtf",
       topCalc: "sum",
       topCalcParams: { precision: 2 },
-      cellEdited: updateFlour,
+      cellEdited: render,
       editor: false,
       sorter: "number",
       editorParams: {
@@ -270,8 +284,9 @@ var fdColumns = {
     },
   ],
 };
+
+//add new table, if its the first table, add the Final Dough table as well
 function addTable(evt) {
-  loadingCursor(true);
   if (tableLength !== 0) {
     table.deleteColumn("bpf");
     table.deleteColumn("wtf");
@@ -297,7 +312,7 @@ function addTable(evt) {
           field: `wt${tableLength}`,
           topCalc: "sum",
           topCalcParams: { precision: 2 },
-          cellEdited: updateFlour,
+          cellEdited: render,
           editor: "number",
           sorter: "number",
           editorParams: {
@@ -331,10 +346,11 @@ function addTable(evt) {
         }
       });
     });
-    updateFlour();
+    render();
     saveTable();
-  loadingCursor(false);
 }
+
+//update name+description of recipe
 async function updateRecipe(e) {
   try {
     e.preventDefault();
@@ -365,14 +381,18 @@ async function updateRecipe(e) {
     console.log(err);
   }
 }
-function updateFlour() {
+
+//go thru tables and update bakers percentage in all active rows
+//if final dough table is present, calculate final dough values based on populated cells
+function render() {
   let flourColumn = table.getColumn("isflour");
   let flourWeight = [];
   let elseWeight = [];
   let activeRows = [];
 
   /* Look down isFlour column, traverse and build flour/else totals
-  add any non-zero 
+  simultaenously build array of active rows, which are rows that have weights in them
+  and thus need to have bakers percentage calculated
 */
 
   flourColumn.getCells().forEach((cell) => {
@@ -413,7 +433,7 @@ function updateFlour() {
       }
     }
   });
-  /* Calculate Bakers Percentage */
+  /* Calculate Bakers Percentage on all active rows*/
   activeRows.forEach((row) => {
     let data = row.getData();
     let tableTotal = 0;
@@ -444,6 +464,14 @@ function updateFlour() {
   saveTable();
 }
 
+
+/* Beacuse the format of the cell data and the column layout is too similar,
+I am running two PUT requests (one for table config, one with row data)
+
+This package has issues and doesnt actually save the column layout as presented,
+so I am jamming queries into these puts that represent the number of tables the user has added
+as well as the added table header values
+*/
 async function saveTable(e = null) {
   try {
     var tableData = table.getData();
@@ -484,6 +512,7 @@ async function saveTable(e = null) {
     console.log(err);
   }
 }
+
 async function fuzzySearchFunc(term) {
   let matches = [];
   searchTable = await fuzzySearch(term);
@@ -496,12 +525,10 @@ async function fuzzySearchFunc(term) {
 async function fuzzySearch(term) {
   if (term.length <= 0) term = "";
 
-  loadingCursor(true);
   try {
     let cInventory = await fetch(
       `/inventory/getFuzzy?search=${term}`
     ).then((res) => res.json());
-    loadingCursor(false);
     return cInventory;
   } catch (err) {
     console.log(err);

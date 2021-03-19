@@ -3,6 +3,9 @@ const CustomIngredient = require('../models/customIngredient');
 const Ingredient = require('../models/ingredient');
 var FuzzySearch = require('fuzzy-search');
 let staticIngredients;
+
+//on server startup, get the list of static ingredients and store in memory
+//reduce unnecessary db calls during fuzzy search
 (async ()=>{
         try{
             staticIngredients = await Ingredient.find({},{"_id":0,"name":1}); 
@@ -18,6 +21,8 @@ module.exports = {
     delete: deleteItem,
 }
 
+
+//get inventory index view
 async function index(req, res, next){
     try{
         res.render('inventory/index.ejs',{
@@ -33,6 +38,7 @@ async function index(req, res, next){
     }
 }
 
+//get array list of all custom ingredients
 async function getIndex(req, res, next){
     try{
         let result = await CustomIngredient.find({user: req.user._id});
@@ -45,6 +51,7 @@ async function getIndex(req, res, next){
     }
 }
 
+//combine custom ingredients with static ingredients and perform fuzzy search
 async function getFuzzy(req, res, next){
     try{
        let arr = await CustomIngredient.find({user: req.user._id},{"_id":0,"name":1});
@@ -61,6 +68,7 @@ async function getFuzzy(req, res, next){
     }
 }
 
+//create new custom ingredient
 async function create(req, res, next){
     try{
         let newItem = {
@@ -78,6 +86,7 @@ async function create(req, res, next){
     }
 }
 
+//who knows.. 
 async function deleteItem(req, res, next){
     try{
         await CustomIngredient.deleteOne({_id: req.params.id});
