@@ -245,7 +245,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function addRow() {
   render();
-  saveTable();
   table.addRow({});
 }
 
@@ -347,7 +346,6 @@ function addTable(evt) {
       });
     });
     render();
-    saveTable();
 }
 
 //update name+description of recipe
@@ -461,7 +459,6 @@ function render() {
       );
     }
   });
-  saveTable();
 }
 
 
