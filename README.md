@@ -23,7 +23,9 @@ Node, Express JS , MongoDB
 EJS + Materialize CSS
 
 Tables: [Tabulator](http://tabulator.info/)
+
 Fuzzy Search: [fuzzy-search](https://github.com/wouter2203/fuzzy-search#readme)
+
 [Passport.js](http://www.passportjs.org/docs/oauth2-api/)
 
 ## Views
