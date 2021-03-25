@@ -110,7 +110,9 @@
       </div>
       <div class="row">
 
-          <div id="example"></div>  
+          <div>
+            <%- (recipe.recipeHtml)?recipe.recipeHtml: `<table class="tabulator-print-table"></table>` %> 
+          </div>  
         <div class="col s12">
           <div class="input-field">
           <button id="add-row-btn" class="btn red waves-effect waves-light"><i class="material-icons">add</i></button>

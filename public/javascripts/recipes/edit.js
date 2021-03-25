@@ -14,14 +14,15 @@ var defaultSort = [
 ];
 
 //table initial column buildout
-var table = new Tabulator("#example", {
+
+var table = new Tabulator(".tabulator-print-table", {
   history: true,
   tabEndNewRow: true,
   height: "100%", // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
-  data: [{}], //assign data to table
+  //data: [{}], //assign data to table
   //layout:"fitColumns", //fit columns to width of table (optional)
   initialSort: defaultSort,
-  columns: [
+   columns: [
     //Define Table Columns
     {
       title: "Ingredient",
@@ -98,7 +99,7 @@ var table = new Tabulator("#example", {
         if (table.rowManager.activeRowsCount < 1) addRow();
       },
     },
-  ],
+  ], 
 });
 
 /* during init, pull recipe data by get request, parse the
@@ -111,7 +112,7 @@ there is no render function because the table does its own thing
 */
 async function init() {
   try {
-    let recipe = await fetch(`/api/${recipeId.value}`).then((res) =>
+/*     let recipe = await fetch(`/api/${recipeId.value}`).then((res) =>
       res.json()
     );
     rowData = JSON.parse(recipe.recipeRows);
@@ -138,7 +139,7 @@ async function init() {
             });
           }
         });
-    });
+    }); */
   } catch (err) {
     console.log(err);
   }
