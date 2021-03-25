@@ -3,23 +3,12 @@ const Recipe = require("../models/recipe");
 
 module.exports = {
   index,
-  getIndex,
   create,
-  edit,
   update,
-  getTable,
+  edit,
   delete: deleteItem,
 };
-//get index view
-function index(req, res, next) {
-  res.render("recipes/index.ejs", {
-    title: `breadBox - Recipes - ${req.user.name}`,
-    user: req.user,
-    active: "recipes",
-  });
-}
-
-//get array of all recipes owned by user
+/* //get array of all recipes owned by user
 async function getIndex(req, res, next) {
   try {
     let result = await Recipe.find({ user: req.user._id });
@@ -30,7 +19,31 @@ async function getIndex(req, res, next) {
       error: err,
     });
   }
+} */
+
+/* 
+async function getTable(req, res, next) {
+  try {
+    let thisRecipe = await Recipe.findById(req.params.id);
+    return res.send(thisRecipe)
+  } catch (err) {
+    res.render("error", {
+      message: "recipe.js controller - getTable",
+      error: err,
+    });
+  }
+} */
+
+
+//get index view
+function index(req, res, next) {
+  res.render("recipes/index.ejs", {
+    title: `breadBox - Recipes - ${req.user.name}`,
+    user: req.user,
+    active: "recipes",
+  });
 }
+
 
 //create new recipe document
 async function create(req, res, next) {
@@ -95,14 +108,3 @@ async function deleteItem(req, res, next) {
 
 
 
-async function getTable(req, res, next) {
-  try {
-    let thisRecipe = await Recipe.findById(req.params.id);
-    return res.send(thisRecipe)
-  } catch (err) {
-    res.render("error", {
-      message: "recipe.js controller - getTable",
-      error: err,
-    });
-  }
-}

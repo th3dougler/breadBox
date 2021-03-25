@@ -12,6 +12,7 @@ var recipeSchema = new mongoose.Schema({
     recipeColumns: {type: String, default: "[{}]"},
     recipeTables: {type: Number, default: 0},
     tableHeaders: [{type: String}],
+    recipeHtml: {type: String},
     tags: [{type: String}],
 },{
     timestamps: true,

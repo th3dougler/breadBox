@@ -1,4 +1,3 @@
-
 var searchTable;
 var tableLength = 0;
 let recipeId;
@@ -13,7 +12,6 @@ var defaultSort = [
   { column: "wt0", dir: "dec" },
   { column: "isflour", dir: "dec" },
 ];
-
 
 //table initial column buildout
 var table = new Tabulator("#example", {
@@ -103,7 +101,6 @@ var table = new Tabulator("#example", {
   ],
 });
 
-
 /* during init, pull recipe data by get request, parse the
 relevant json data and pipe it into the table,
 
@@ -148,7 +145,11 @@ async function init() {
 }
 //helper function for formatting bakers percentage in a more human-readable format
 function formatPercent(cell) {
-  if (isNaN(cell.getValue()) || !isFinite(cell.getValue()) || cell.getValue() == 0) {
+  if (
+    isNaN(cell.getValue()) ||
+    !isFinite(cell.getValue()) ||
+    cell.getValue() == 0
+  ) {
     return "";
   } else return (cell.getValue() * 100).toFixed(1) + "%";
 }
@@ -161,8 +162,6 @@ function topPercent(values) {
 
   return (sum * 100).toFixed(1) + "%";
 }
-
-
 
 // grab necessary dom elements
 document.addEventListener("DOMContentLoaded", function () {
@@ -178,6 +177,9 @@ document.addEventListener("DOMContentLoaded", function () {
   var saveBtn = document.getElementById("save-btn");
   saveBtn.addEventListener("click", saveTable);
 
+  var saveHtmlBtn = document.getElementById("save-html");
+  saveHtmlBtn.addEventListener("click", saveHtml);
+
   recipeId = document.getElementById("recipe-id");
 
   updateRecipeForm = document.getElementById("update-recipe-form");
@@ -185,12 +187,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   updateRecipeBtn = document.getElementById("update-recipe");
   updateRecipeBtn.addEventListener("click", updateRecipe);
-  isPrivate = document.getElementById('is-private');
-  isPrivate.addEventListener('change', async function(e){
-    try{
+  isPrivate = document.getElementById("is-private");
+  isPrivate.addEventListener("change", async function (e) {
+    try {
       let body = {
         private: isPrivate.checked,
-      }
+      };
       await fetch(`/recipes/${recipeId.value}`, {
         method: "PUT", // *GET, POST, PUT, DELETE, etc.
         cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
@@ -202,34 +204,32 @@ document.addEventListener("DOMContentLoaded", function () {
         referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
         body: JSON.stringify(body), // body data type must match "Content-Type" header
       });
-  
-    }catch(err){
+    } catch (err) {
       console.log(err);
     }
+  });
 
-  })
-  
   dlCSV = document.getElementById("dlCSV");
-  dlCSV.addEventListener('click', function(){
+  dlCSV.addEventListener("click", function () {
     table.download("csv", "data.csv");
-  })
+  });
   dlJSON = document.getElementById("dlJSON");
-  dlJSON.addEventListener('click', function(){
+  dlJSON.addEventListener("click", function () {
     table.download("json", "data.json");
-  })
+  });
   dlXLSX = document.getElementById("dlXLSX");
-  dlXLSX.addEventListener('click', function(){
+  dlXLSX.addEventListener("click", function () {
     table.download("xlsx", "data.xlsx", {});
-  })
+  });
   dlPDF = document.getElementById("dlPDF");
-  dlPDF.addEventListener('click', function(){
+  dlPDF.addEventListener("click", function () {
     table.downloadToTab("pdf");
-  })
+  });
   dlHTML = document.getElementById("dlHTML");
-  dlHTML.addEventListener('click', function(){
-    table.download("html", "data.html", {style:true});
-  })
-  
+  dlHTML.addEventListener("click", function () {
+    table.download("html", "data.html", { style: true });
+  });
+
   var elems = document.querySelectorAll(".fixed-action-btn");
   M.FloatingActionButton.init(elems, {
     direction: "left",
@@ -237,7 +237,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   collapsible = document.querySelectorAll(".collapsible");
   M.Collapsible.init(collapsible);
-  elems = document.querySelectorAll('.modal');
+  elems = document.querySelectorAll(".modal");
   M.Modal.init(elems);
 
   init();
@@ -248,8 +248,33 @@ function addRow() {
   table.addRow({});
 }
 
+async function saveHtml() {
+  try {
+    
+    let body = {
+      recipeHtml: table.getHtml()
+    };
+    console.log(body)
+    
+    await fetch(`/recipes/${recipeId.value}`, {
+      method: "PUT", // *GET, POST, PUT, DELETE, etc.
+      cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+      credentials: "same-origin", // include, *same-origin, omit
+      headers: {
+        "Content-Type": "application/json",
+      },
+      redirect: "follow", // manual, *follow, error
+      referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+      body: JSON.stringify(body), // body data type must match "Content-Type" header
+    });
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 function sortRecipe() {
   render();
+  console.log(table.getHtml());
   saveTable();
   table.setSort(defaultSort);
 }
@@ -327,17 +352,16 @@ function addTable(evt) {
       tableButton.addEventListener("click", async function () {
         let allRows = table.getRows();
         tableLength--;
-        allRows.forEach((row,idx)=>{
-          row.getCell(`bp${tableLength+1}`).setValue("");
-          row.getCell(`wt${tableLength+1}`).setValue("");
+        allRows.forEach((row, idx) => {
+          row.getCell(`bp${tableLength + 1}`).setValue("");
+          row.getCell(`wt${tableLength + 1}`).setValue("");
           if (tableLength === 0) {
             row.getCell(`bpf`).setValue("");
             row.getCell(`wtf`).setValue("");
           }
-        })
-        table.deleteColumn(`bp${tableLength+1}`);
-        table.deleteColumn(`wt${tableLength+1}`);
-        
+        });
+        table.deleteColumn(`bp${tableLength + 1}`);
+        table.deleteColumn(`wt${tableLength + 1}`);
 
         if (tableLength === 0) {
           table.deleteColumn(`bpf`);
@@ -345,7 +369,7 @@ function addTable(evt) {
         }
       });
     });
-    render();
+  render();
 }
 
 //update name+description of recipe
@@ -449,18 +473,17 @@ function render() {
           : 0;
     }
     if (tableLength > 0) {
-      console.log(formulaTotal, tableTotal)
-      tableTotal = (isNaN(tableTotal))? 0 : tableTotal;
+      console.log(formulaTotal, tableTotal);
+      tableTotal = isNaN(tableTotal) ? 0 : tableTotal;
       row.update({ wtf: formulaTotal - tableTotal });
       let bpCell = row.getCell(`bpf`);
-      
+
       bpCell.setValue(
         Number.parseFloat(data[`wtf`]) / flourWeight[tableLength + 1]
       );
     }
   });
 }
-
 
 /* Beacuse the format of the cell data and the column layout is too similar,
 I am running two PUT requests (one for table config, one with row data)
@@ -469,6 +492,7 @@ This package has issues and doesnt actually save the column layout as presented,
 so I am jamming queries into these puts that represent the number of tables the user has added
 as well as the added table header values
 */
+
 async function saveTable(e = null) {
   try {
     var tableData = table.getData();
@@ -502,7 +526,7 @@ async function saveTable(e = null) {
       referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
       body: JSON.stringify(tableData), // body data type must match "Content-Type" header
     });
-    if (e !== null){
+    if (e !== null) {
       window.location.replace("/recipes");
     }
   } catch (err) {

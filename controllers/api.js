@@ -86,7 +86,7 @@ async function update(req, res, next) {
         },
         { useFindAndModify: false }
       );
-    }else{
+    }else if(req.query.data == "row"){
       delete req.query.data;
       await Recipe.findByIdAndUpdate(
         req.params.id,
@@ -96,6 +96,8 @@ async function update(req, res, next) {
         },
         { useFindAndModify: false }
       );
+    } else{
+      await Recipe.findByIdAndUpdate(req.params.id,req.body)
     }
     Recipe.save();
     res.sendStatus(200);
