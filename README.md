@@ -9,7 +9,7 @@ Easily represent your recipes in terms of bakers percentage, export to multiple 
 
 ## Getting Started
 
-[click here to get started](https://breadbox.herokuapp.com/)
+[click here to get started](https://breadbox.fly.dev/)
 
 #### Planning:
 [Trello](https://trello.com/b/lkO0iVzH/brdbx)
